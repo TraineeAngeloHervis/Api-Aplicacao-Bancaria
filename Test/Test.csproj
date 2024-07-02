@@ -1,28 +1,35 @@
-<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
+
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
+
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
-        <SonarQubeTestProject>true</SonarQubeTestProject>
     </PropertyGroup>
+
     <ItemGroup>
-        <PackageReference Include="AutoFixture" Version="4.18.1" />
-        <PackageReference Include="Bogus" Version="35.5.0" />
-        <PackageReference Include="FluentAssertions" Version="6.12.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-        <PackageReference Include="Moq" Version="4.20.70" />
-        <PackageReference Include="xunit" Version="2.8.0" />
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.8">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+        <PackageReference Include="coverlet.collector" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0"/>
+        <PackageReference Include="xunit" Version="2.5.3"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3"/>
     </ItemGroup>
+
     <ItemGroup>
-        <ProjectReference Include="..\Api\Api.csproj" />
-        <ProjectReference Include="..\Crosscutting\Crosscutting.csproj" />
-        <ProjectReference Include="..\Domain\Domain.csproj" />
+        <Using Include="Xunit"/>
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Api\Controllers\" />
+      <Folder Include="Api\Services\" />
+      <Folder Include="Crosscutting\Dto\" />
+      <Folder Include="Domain\Clientes\Entities\" />
+      <Folder Include="Domain\Clientes\Interfaces\" />
+      <Folder Include="Domain\Clientes\Models\" />
+      <Folder Include="Domain\Contas\Entities\" />
+      <Folder Include="Domain\Contas\Interfaces\" />
+      <Folder Include="Domain\Contas\Models\" />
+    </ItemGroup>
+
 </Project>
