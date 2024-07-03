@@ -1,6 +1,6 @@
 namespace Domain.Clientes.Services;
 
-public class ExcluirClienteService
+public class ContaService
 {
     
 }

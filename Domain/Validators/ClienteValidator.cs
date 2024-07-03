@@ -17,8 +17,8 @@ public class ClienteValidator : AbstractValidator<ClienteRequestDto>
         RuleFor(cliente => cliente.DataNascimento)
             .LessThan(DateTime.Now).WithMessage("A data de nascimento não pode ser maior que a data atual.");
         
-        RuleFor(cliente => cliente.EstadoCivil)
+        RuleFor(cliente => cliente.EstadoCivil.ToLower())
             .NotEmpty().WithMessage("O estado civil do cliente é obrigatório.")
-            .Matches(@"(Solteiro|Casado|Divorciado|Viúvo)").WithMessage("Estado civil inválido.");
+            .Matches(@"(solteiro|casado|divorciado|viúvo|viuvo)").WithMessage("Estado civil inválido.");
     }
 }
