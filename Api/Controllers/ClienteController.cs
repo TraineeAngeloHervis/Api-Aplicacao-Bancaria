@@ -15,35 +15,35 @@ public class ClienteController : ControllerBase
         _clienteService = clienteService;
     }
 
-    [HttpPost]
+    [HttpPost("cadastrar")]
     public IActionResult CadastrarCliente([FromBody] ClienteRequestDto clienteRequestDto)
     {
         var clienteCadastrado = _clienteService.CadastrarCliente(clienteRequestDto);
         return CreatedAtAction(nameof(ConsultarCliente), new { id = clienteCadastrado.Id }, clienteCadastrado);
     }
 
-    [HttpPut]
+    [HttpPut("atualizar")]
     public IActionResult AtualizarCliente([FromBody] ClienteRequestDto clienteRequestDto)
     {
         var clienteAtualizado = _clienteService.AtualizarCliente(clienteRequestDto);
         return Ok(clienteAtualizado);
     }
 
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("excluir/{id:guid}")]
     public IActionResult ExcluirCliente(Guid id)
     {
         var clienteExcluido = _clienteService.ExcluirCliente(id);
         return clienteExcluido ? NoContent() : NotFound();
     }
 
-    [HttpGet("{id:guid}")]
+    [HttpGet("consultar/{id:guid}")]
     public IActionResult ConsultarCliente(Guid id)
     {
         var cliente = _clienteService.ConsultarCliente(id);
         return cliente == null ? NotFound() : Ok(cliente);
     }
 
-    [HttpGet]
+    [HttpGet("listar")]
     public IActionResult ListarClientes()
     {
         var clientes = _clienteService.ListarClientes();
