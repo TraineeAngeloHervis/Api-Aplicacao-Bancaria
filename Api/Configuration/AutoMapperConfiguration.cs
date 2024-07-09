@@ -9,7 +9,7 @@ public static class AutoMapperConfiguracao
     {
         ArgumentNullException.ThrowIfNull(services);
         
-        services.AddAutoMapper(typeof(MappingProfile));
+        services.AddAutoMapper(typeof(AutoMapperConfiguracao));
 
         ConfigurarProfiles(services);
     }

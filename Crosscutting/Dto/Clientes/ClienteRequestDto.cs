@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Crosscutting.Enums;
 
 namespace Crosscutting.Dto.Clientes;
 
@@ -10,5 +11,5 @@ public class ClienteRequestDto
 
     [Required] public DateTime DataNascimento { get; set; }
 
-    [Required] public string EstadoCivil { get; set; }
+    [Required] public EstadoCivil EstadoCivil { get; set; }
 }

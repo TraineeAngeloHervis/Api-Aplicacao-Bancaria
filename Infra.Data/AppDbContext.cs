@@ -7,7 +7,6 @@ namespace Infra.Data;
 
 public class AppDbContext : DbContext
 {
-    //Configuração do banco de dados para MYSQL
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var serverVersion = new MySqlServerVersion(new Version(8, 0, 25));
