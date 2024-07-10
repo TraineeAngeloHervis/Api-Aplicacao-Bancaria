@@ -1,5 +1,4 @@
-using Domain.Clientes.Entities;
-using Domain.Contas.Entities;
+using Domain.Entities;
 using Infra.Data.Mapping;
 using Microsoft.EntityFrameworkCore;
 

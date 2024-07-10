@@ -1,4 +1,6 @@
-namespace Crosscutting.Dto.Clientes;
+using Crosscutting.Enums;
+
+namespace Crosscutting.Dto;
 
 public class ClienteResponseDto
 {
@@ -6,5 +8,5 @@ public class ClienteResponseDto
     public string Nome { get; set; }
     public string Cpf { get; set; }
     public DateTime DataNascimento { get; set; }
-    public string EstadoCivil { get; set; }
+    public EstadoCivil EstadoCivil { get; set; }
 }

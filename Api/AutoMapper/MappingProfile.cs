@@ -1,8 +1,6 @@
 using AutoMapper;
-using Crosscutting.Dto.Clientes;
-using Crosscutting.Dto.Contas;
-using Domain.Clientes.Entities;
-using Domain.Contas.Entities;
+using Crosscutting.Dto;
+using Domain.Entities;
 
 namespace Api.AutoMapper;
 

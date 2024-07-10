@@ -1,4 +1,4 @@
-using Crosscutting.Dto.Clientes;
+using Crosscutting.Dto;
 using FluentValidation;
 
 namespace Crosscutting.Validators;
@@ -14,7 +14,7 @@ public class ClienteValidator : AbstractValidator<ClienteRequestDto>
         RuleFor(cliente => cliente.Cpf)
             .NotEmpty()
             .WithMessage("O CPF do cliente é obrigatório.")
-            .Matches(@"\d{11}").WithMessage("Digite apenas números.");
+            .Matches(@"\d{11}").WithMessage("O CPF do cliente é inválido.");
 
         RuleFor(cliente => cliente.DataNascimento)
             .LessThan(DateTime.Now)

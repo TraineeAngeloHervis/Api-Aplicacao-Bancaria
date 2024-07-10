@@ -1,11 +1,11 @@
-using Crosscutting.Dto.Clientes;
+using Crosscutting.Dto;
 
-namespace Domain.Clientes.Interfaces;
+namespace Domain.Interfaces;
 
 public interface IClienteService
 {
     ClienteResponseDto CadastrarCliente(ClienteRequestDto clienteRequestDto);
-    ClienteResponseDto AtualizarCliente(ClienteRequestDto clienteRequestDto);
+    ClienteResponseDto AtualizarCliente(Guid id, ClienteRequestDto clienteRequestDto);
     bool ExcluirCliente(Guid id);
     ClienteResponseDto ConsultarCliente(Guid id);
     IEnumerable<ClienteResponseDto> ListarClientes();

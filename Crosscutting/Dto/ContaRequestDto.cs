@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using Crosscutting.Enums;
 
-namespace Crosscutting.Dto.Contas;
+namespace Crosscutting.Dto;
 
 public class ContaRequestDto
 {
@@ -8,7 +9,7 @@ public class ContaRequestDto
 
     [Required] public decimal SaldoInicial { get; set; }
 
-    [Required] public string TipoConta { get; set; }
+    [Required] public TipoConta TipoConta { get; set; }
 
     [Required] public DateTime DataAbertura { get; set; } = DateTime.Now;
 }

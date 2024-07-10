@@ -1,12 +1,15 @@
 using Infra.Data;
-using Microsoft.OpenApi.Models;
 using Api.Configuration;
-using Domain.Clientes.Interfaces;
-using Domain.Clientes.Services;
-using Domain.Contas.Interfaces;
+using Crosscutting.Validators;
+using Domain.Interfaces;
+using Domain.Services;
 using Infra.Data.Repository;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddValidatorsFromAssemblyContaining<ClienteValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<ContaValidator>();
 
 builder.Services.AddCors(options =>
 {
