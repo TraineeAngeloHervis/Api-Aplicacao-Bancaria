@@ -1,5 +1,6 @@
 using AutoMapper;
 using Crosscutting.Dto;
+using Crosscutting.Validators;
 using Domain.Entities;
 using Domain.Interfaces;
 using FluentValidation;
@@ -10,9 +11,9 @@ public class ClienteService : IClienteService
 {
     private readonly IClienteRepository _clienteRepository;
     private readonly IMapper _mapper;
-    private readonly IValidator<ClienteRequestDto> _clienteValidator;
+    private readonly ClienteValidator _clienteValidator;
     
-    public ClienteService(IClienteRepository clienteRepository, IMapper mapper, IValidator<ClienteRequestDto> clienteValidator)
+    public ClienteService(IClienteRepository clienteRepository, IMapper mapper, ClienteValidator clienteValidator)
     {
         _clienteRepository = clienteRepository;
         _mapper = mapper;
@@ -21,13 +22,8 @@ public class ClienteService : IClienteService
     
     public ClienteResponseDto CadastrarCliente(ClienteRequestDto clienteRequestDto)
     {
-        var clienteEhValido = _clienteValidator.Validate(clienteRequestDto);
-        if (!clienteEhValido.IsValid)
-        {
-            throw new ValidationException(clienteEhValido.Errors);
-        }
-
         var cliente = _mapper.Map<Cliente>(clienteRequestDto);
+        _clienteValidator.ValidarCliente(clienteRequestDto);
         var clienteCadastrado = _clienteRepository.CadastrarCliente(cliente);
         return _mapper.Map<ClienteResponseDto>(clienteCadastrado);
     }

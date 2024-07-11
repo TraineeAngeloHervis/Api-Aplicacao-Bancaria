@@ -1,5 +1,6 @@
 using Infra.Data;
 using Api.Configuration;
+using Api.Middleware;
 using Crosscutting.Validators;
 using Domain.Interfaces;
 using Domain.Services;
@@ -40,6 +41,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
+
+app.TratarExcecao();
 
 app.UseHttpsRedirection();
 app.UseRouting();
