@@ -1,5 +1,6 @@
 using AutoMapper;
 using Crosscutting.Dto;
+using Crosscutting.Exceptions;
 using Crosscutting.Validators;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -23,13 +24,19 @@ public class ClienteService : IClienteService
     public ClienteResponseDto CadastrarCliente(ClienteRequestDto clienteRequestDto)
     {
         var cliente = _mapper.Map<Cliente>(clienteRequestDto);
-        _clienteValidator.ValidarCliente(clienteRequestDto);
+        _clienteValidator.ValidateAndThrow(clienteRequestDto);
         var clienteCadastrado = _clienteRepository.CadastrarCliente(cliente);
         return _mapper.Map<ClienteResponseDto>(clienteCadastrado);
     }
 
     public ClienteResponseDto AtualizarCliente(Guid id, ClienteRequestDto clienteRequestDto)
     {
+        var clienteExistente = _clienteRepository.ConsultarCliente(id);
+        if (clienteExistente == null)
+        {
+            throw new ClienteNaoEncontradoException();
+        }
+        _clienteValidator.ValidateAndThrow(clienteRequestDto);
         var cliente = _mapper.Map<Cliente>(clienteRequestDto);
         cliente.Id = id;
         var clienteAtualizado = _clienteRepository.AtualizarCliente(cliente);
@@ -38,12 +45,21 @@ public class ClienteService : IClienteService
 
     public bool ExcluirCliente(Guid id)
     {
+        var clienteExistente = _clienteRepository.ConsultarCliente(id);
+        if (clienteExistente == null)
+        {
+            throw new ClienteNaoEncontradoException();
+        }
         return _clienteRepository.ExcluirCliente(id);
     }
 
     public ClienteResponseDto ConsultarCliente(Guid id)
     {
         var cliente = _clienteRepository.ConsultarCliente(id);
+        if (cliente == null)
+        {
+            throw new ClienteNaoEncontradoException();
+        }
         return _mapper.Map<ClienteResponseDto>(cliente);
     }
 

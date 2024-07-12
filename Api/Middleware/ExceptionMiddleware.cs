@@ -1,39 +1,56 @@
 using System.Net;
 using System.Text.Json;
 using Crosscutting.Exceptions;
+using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace Api.Middleware;
-
-public static class ExceptionMiddleware
+namespace Api.Middleware
 {
-    public static void TratarExcecao(this IApplicationBuilder app)
+    public static class ExceptionMiddleware
     {
-        app.UseExceptionHandler(appBuilder =>
+        public static void TratarExcecao(this IApplicationBuilder app)
         {
-            appBuilder.Run(async context =>
+            app.UseExceptionHandler(appBuilder =>
             {
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                context.Response.ContentType = "application/json";
-
-                var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
-                if (contextFeature != null)
+                appBuilder.Run(async context =>
                 {
-                    var exception = contextFeature.Error;
-                    var message = exception.Message;
+                    context.Response.ContentType = "application/json";
 
-                    context.Response.StatusCode = exception switch
+                    var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+                    if (contextFeature != null)
                     {
-                        ClienteNaoEncontradoException => (int)HttpStatusCode.NotFound,
-                        ContaInvalidaException => (int)HttpStatusCode.BadRequest,
-                        ContaNaoEncontradaException => (int)HttpStatusCode.NotFound,
-                        ClienteInvalidoException => (int)HttpStatusCode.BadRequest,
-                        _ => context.Response.StatusCode
-                    };
+                        var exception = contextFeature.Error;
+                        var response = context.Response;
+                        var message = exception.Message;
+                        var statusCode = (int)HttpStatusCode.InternalServerError;
 
-                    await context.Response.WriteAsync(JsonSerializer.Serialize(new { message }));
-                }
+                        switch (exception)
+                        {
+                            case ValidationException validationException:
+                                statusCode = (int)HttpStatusCode.BadRequest;
+                                var validationErrors = validationException.Errors.Select(e => e.ErrorMessage).ToList();
+                                message = string.Join(" ", validationErrors);
+                                break;
+                            case ClienteNaoEncontradoException _:
+                                statusCode = (int)HttpStatusCode.NotFound;
+                                break;
+                            case ClienteInvalidoException _:
+                                statusCode = (int)HttpStatusCode.BadRequest;
+                                break;
+                            case ContaInvalidaException _:
+                                statusCode = (int)HttpStatusCode.BadRequest;
+                                break;
+                            case ContaNaoEncontradaException _:
+                                statusCode = (int)HttpStatusCode.NotFound;
+                                break;
+                        }
+
+                        response.StatusCode = statusCode;
+                        var result = JsonSerializer.Serialize(new { message });
+                        await response.WriteAsync(result);
+                    }
+                });
             });
-        });
+        }
     }
 }

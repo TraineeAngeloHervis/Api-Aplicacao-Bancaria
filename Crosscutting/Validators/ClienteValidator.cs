@@ -1,5 +1,4 @@
 using Crosscutting.Dto;
-using Crosscutting.Exceptions;
 using FluentValidation;
 
 namespace Crosscutting.Validators;
@@ -26,15 +25,5 @@ public class ClienteValidator : AbstractValidator<ClienteRequestDto>
             .WithMessage("O estado civil do cliente é obrigatório.")
             .IsInEnum()
             .WithMessage("Estado civil inválido.");
-    }
-    
-    public void ValidarCliente(ClienteRequestDto clienteRequestDto)
-    {
-        var validationResult = Validate(clienteRequestDto);
-        if (!validationResult.IsValid)
-        {
-            var firstError = validationResult.Errors[0];
-            throw new ClienteInvalidoException(firstError.ErrorMessage);
-        }
     }
 }
