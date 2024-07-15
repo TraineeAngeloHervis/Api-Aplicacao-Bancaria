@@ -21,51 +21,56 @@ public class ClienteService : IClienteService
         _clienteValidator = clienteValidator;
     }
     
-    public ClienteResponseDto CadastrarCliente(ClienteRequestDto clienteRequestDto)
+    public async Task<ClienteResponseDto> CadastrarCliente(ClienteRequestDto clienteRequestDto)
     {
+        var clienteEhValido = await _clienteValidator.ValidateAsync(clienteRequestDto);
+        if (!clienteEhValido.IsValid)
+        {
+            throw new ValidationException(clienteEhValido.Errors);
+        }
+        
         var cliente = _mapper.Map<Cliente>(clienteRequestDto);
-        _clienteValidator.ValidateAndThrow(clienteRequestDto);
-        var clienteCadastrado = _clienteRepository.CadastrarCliente(cliente);
+        var clienteCadastrado = await _clienteRepository.CadastrarCliente(cliente);
         return _mapper.Map<ClienteResponseDto>(clienteCadastrado);
     }
-
-    public ClienteResponseDto AtualizarCliente(Guid id, ClienteRequestDto clienteRequestDto)
+    
+    public async Task<ClienteResponseDto> AtualizarCliente(Guid id, ClienteRequestDto clienteRequestDto)
     {
-        var clienteExistente = _clienteRepository.ConsultarCliente(id);
-        if (clienteExistente == null)
+        if (await _clienteRepository.ConsultarCliente(id) == null)
         {
             throw new ClienteNaoEncontradoException();
         }
-        _clienteValidator.ValidateAndThrow(clienteRequestDto);
+        
         var cliente = _mapper.Map<Cliente>(clienteRequestDto);
         cliente.Id = id;
         var clienteAtualizado = _clienteRepository.AtualizarCliente(cliente);
         return _mapper.Map<ClienteResponseDto>(clienteAtualizado);
     }
-
-    public bool ExcluirCliente(Guid id)
+    
+    public async Task<bool> ExcluirCliente(Guid id)
     {
-        var clienteExistente = _clienteRepository.ConsultarCliente(id);
-        if (clienteExistente == null)
+        if (await _clienteRepository.ConsultarCliente(id) == null)
         {
             throw new ClienteNaoEncontradoException();
         }
-        return _clienteRepository.ExcluirCliente(id);
+        
+        return await _clienteRepository.ExcluirCliente(id);
     }
-
-    public ClienteResponseDto ConsultarCliente(Guid id)
+    
+    public async Task<ClienteResponseDto> ConsultarCliente(Guid id)
     {
-        var cliente = _clienteRepository.ConsultarCliente(id);
-        if (cliente == null)
+        if (await _clienteRepository.ConsultarCliente(id) == null)
         {
             throw new ClienteNaoEncontradoException();
         }
+        
+        var cliente = await _clienteRepository.ConsultarCliente(id);
         return _mapper.Map<ClienteResponseDto>(cliente);
     }
-
-    public IEnumerable<ClienteResponseDto> ListarClientes()
+    
+    public async Task<IEnumerable<ClienteResponseDto>> ListarClientes()
     {
-        var clientes = _clienteRepository.ListarClientes();
+        var clientes = await _clienteRepository.ListarClientes();
         return _mapper.Map<IEnumerable<ClienteResponseDto>>(clientes);
     }
 }

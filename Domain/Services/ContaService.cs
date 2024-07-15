@@ -1,5 +1,6 @@
 using AutoMapper;
 using Crosscutting.Dto;
+using Crosscutting.Exceptions;
 using Domain.Entities;
 using Domain.Interfaces;
 using FluentValidation;
@@ -21,17 +22,16 @@ public class ContaService : IContaService
         _mapper = mapper;
         _contaValidator = contaValidator;
     }
-
-    //Utilizando FluentValidation
-    public ContaResponseDto CadastrarConta(Guid clienteId, ContaRequestDto contaRequestDto)
+    
+    public async Task<ContaResponseDto> CadastrarConta(Guid clienteId, ContaRequestDto contaRequestDto)
     {
-        var cliente = _clienteRepository.ConsultarCliente(clienteId);
+        var cliente = await _clienteRepository.ConsultarCliente(clienteId);
         if (cliente == null)
         {
-            throw new Exception("Cliente não encontrado.");
+            throw new ContaNaoEncontradaException();
         }
 
-        var contaEhValido = _contaValidator.Validate(contaRequestDto);
+        var contaEhValido = await _contaValidator.ValidateAsync(contaRequestDto);
         if (!contaEhValido.IsValid)
         {
             throw new ValidationException(contaEhValido.Errors);
@@ -39,62 +39,62 @@ public class ContaService : IContaService
 
         var conta = _mapper.Map<Conta>(contaRequestDto);
         conta.Cliente = cliente;
-        var contaCadastrada = _contaRepository.CadastrarConta(clienteId, conta);
+        var contaCadastrada = await _contaRepository.CadastrarConta(clienteId, conta);
         return _mapper.Map<ContaResponseDto>(contaCadastrada);
     }
-
-    public ContaResponseDto AtualizarConta(Guid clienteId, ContaRequestDto contaRequestDto, Guid id)
+    
+    public async Task<ContaResponseDto> AtualizarConta(Guid clienteId, ContaRequestDto contaRequestDto, Guid id)
     {
-        var cliente = _clienteRepository.ConsultarCliente(clienteId);
+        var cliente = await _clienteRepository.ConsultarCliente(clienteId);
         if (cliente == null)
         {
-            throw new Exception("Cliente não encontrado.");
+            throw new ClienteNaoEncontradoException();
         }
 
-        var conta = _contaRepository.ConsultarConta(clienteId, id);
+        var conta = await _contaRepository.ConsultarConta(clienteId, id);
         if (conta == null)
         {
-            throw new Exception("Conta não encontrada.");
+            throw new ContaNaoEncontradaException();
         }
 
         conta = _mapper.Map(contaRequestDto, conta);
         conta.Cliente = cliente;
-        var contaAtualizada = _contaRepository.AtualizarConta(clienteId, conta);
+        var contaAtualizada = await _contaRepository.AtualizarConta(clienteId, conta);
         return _mapper.Map<ContaResponseDto>(contaAtualizada);
     }
-
-    public bool ExcluirConta(Guid clienteId, Guid id)
+    
+    public async Task<bool> ExcluirConta(Guid clienteId, Guid id)
     {
-        var cliente = _clienteRepository.ConsultarCliente(clienteId);
+        var cliente = await _clienteRepository.ConsultarCliente(clienteId);
         if (cliente == null)
         {
-            throw new Exception("Cliente não encontrado.");
+            throw new ClienteNaoEncontradoException();
         }
 
-        return _contaRepository.ExcluirConta(clienteId, id);
+        return await _contaRepository.ExcluirConta(clienteId, id);
     }
-
-    public ContaResponseDto ConsultarConta(Guid clienteId, Guid id)
+    
+    public async Task<ContaResponseDto> ConsultarConta(Guid clienteId, Guid id)
     {
-        var cliente = _clienteRepository.ConsultarCliente(clienteId);
+        var cliente = await _clienteRepository.ConsultarCliente(clienteId);
         if (cliente == null)
         {
-            throw new Exception("Cliente não encontrado.");
+            throw new ClienteNaoEncontradoException();
         }
 
-        var conta = _contaRepository.ConsultarConta(clienteId, id);
+        var conta = await _contaRepository.ConsultarConta(clienteId, id);
         return _mapper.Map<ContaResponseDto>(conta);
     }
-
-    public IEnumerable<ContaResponseDto> ListarContas(Guid clienteId)
+    
+    public async Task<IEnumerable<ContaResponseDto>> ListarContas(Guid clienteId)
     {
-        var cliente = _clienteRepository.ConsultarCliente(clienteId);
+        var cliente = await _clienteRepository.ConsultarCliente(clienteId);
         if (cliente == null)
         {
-            throw new Exception("Cliente não encontrado.");
+            throw new ClienteNaoEncontradoException();
         }
 
-        var contas = _contaRepository.ListarContas(clienteId);
+        var contas = await _contaRepository.ListarContas(clienteId);
         return _mapper.Map<IEnumerable<ContaResponseDto>>(contas);
     }
 }

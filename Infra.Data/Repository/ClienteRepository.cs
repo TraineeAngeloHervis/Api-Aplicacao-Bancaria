@@ -1,40 +1,42 @@
 using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Data.Repository;
 
 public class ClienteRepository(AppDbContext context) : IClienteRepository
 {
-    public Cliente CadastrarCliente(Cliente cliente)
+    public async Task<Cliente> CadastrarCliente(Cliente cliente)
     {
-        context.Clientes.Add(cliente);
-        context.SaveChanges();
+        await context.Clientes.AddAsync(cliente);
+        await context.SaveChangesAsync();
         return cliente;
     }
 
-    public Cliente AtualizarCliente(Cliente cliente)
+    public async Task<Cliente> AtualizarCliente(Cliente cliente)
     {
         context.Clientes.Update(cliente);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
         return cliente;
     }
-
-    public bool ExcluirCliente(Guid id)
+    
+    public async Task<bool> ExcluirCliente(Guid id)
     {
-        var cliente = context.Clientes.Find(id);
-        if (cliente is null) return false;
+        var cliente = await context.Clientes.FindAsync(id);
+        if (cliente == null) return false;
+
         context.Clientes.Remove(cliente);
-        context.SaveChanges();
+        await context.SaveChangesAsync();
         return true;
     }
 
-    public Cliente ConsultarCliente(Guid id)
+    public async Task<Cliente> ConsultarCliente(Guid id)
     {
-        return context.Clientes.FirstOrDefault(c => c.Id == id);
+        return await context.Clientes.FindAsync(id);
     }
 
-    public IEnumerable<Cliente> ListarClientes()
+    public async Task<IEnumerable<Cliente>> ListarClientes()
     {
-        return context.Clientes.ToList();
+        return await context.Clientes.ToListAsync();
     }
 }

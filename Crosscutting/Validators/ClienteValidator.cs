@@ -14,15 +14,14 @@ public class ClienteValidator : AbstractValidator<ClienteRequestDto>
         RuleFor(cliente => cliente.Cpf)
             .NotEmpty()
             .WithMessage("O CPF do cliente é obrigatório.")
-            .Matches(@"\d{11}").WithMessage("O CPF do cliente é inválido.");
+            .Matches(@"\d{11}")
+            .WithMessage("O CPF do cliente é inválido.");
 
         RuleFor(cliente => cliente.DataNascimento)
             .LessThan(DateTime.Now)
             .WithMessage("A data de nascimento não pode ser maior que a data atual.");
 
         RuleFor(cliente => cliente.EstadoCivil)
-            .NotEmpty()
-            .WithMessage("O estado civil do cliente é obrigatório.")
             .IsInEnum()
             .WithMessage("Estado civil inválido.");
     }
