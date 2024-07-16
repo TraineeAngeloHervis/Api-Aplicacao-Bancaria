@@ -26,7 +26,9 @@ public class ClienteControllerTests
         // Arrange
         var clienteRequestDto = ClienteRequestDtoBuilder.Novo().Build();
         var clienteResponseDto = ClienteResponseDtoBuilder.Novo().Build();
-        _clienteServiceMock.Setup(x => x.CadastrarCliente(clienteRequestDto)).Returns(clienteResponseDto);
+        _clienteServiceMock
+            .Setup(x => x.CadastrarCliente(clienteRequestDto))
+            .Returns(clienteResponseDto);
         
         // Act
         var resultadoEsperado = _clienteController.CadastrarCliente(clienteRequestDto) as CreatedAtActionResult;

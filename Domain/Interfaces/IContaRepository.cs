@@ -6,7 +6,7 @@ public interface IContaRepository
 {
     Conta CadastrarConta(Guid clienteId, Conta conta);
     Conta AtualizarConta(Guid clienteId, Conta conta);
-    bool ExcluirConta(Guid clienteId, Guid id);
-    Conta ConsultarConta(Guid clienteId, Guid id);
+    bool ExcluirConta(Guid id);
+    Conta ConsultarConta(Guid id);
     IEnumerable<Conta> ListarContas(Guid clienteId);
 }

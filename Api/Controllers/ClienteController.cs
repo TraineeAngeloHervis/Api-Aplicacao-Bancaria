@@ -9,6 +9,7 @@ namespace Api.Controllers;
 public class ClienteController : ControllerBase
 {
     private readonly IClienteService _clienteService;
+    private readonly IClienteValidator _clienteValidator;
 
     public ClienteController(IClienteService clienteService)
     {
@@ -16,11 +17,8 @@ public class ClienteController : ControllerBase
     }
 
     [HttpPost("cadastrar")]
-    public IActionResult CadastrarCliente([FromBody] ClienteRequestDto clienteRequestDto)
-    {
-        var clienteCadastrado = _clienteService.CadastrarCliente(clienteRequestDto);
-        return CreatedAtAction(nameof(ConsultarCliente), new { id = clienteCadastrado.Id }, clienteCadastrado);
-    }
+    //usar _clienteValidator.EhValido()
+    
 
     [HttpPut("atualizar/{id:guid}")]
     public IActionResult AtualizarCliente(Guid id, [FromBody] ClienteRequestDto clienteRequestDto)
