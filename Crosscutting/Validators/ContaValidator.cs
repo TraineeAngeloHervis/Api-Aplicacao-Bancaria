@@ -17,7 +17,11 @@ public class ContaValidator : AbstractValidator<ContaRequestDto>
 
         RuleFor(conta => conta.DataAbertura)
             .LessThanOrEqualTo(DateTime.Now.AddSeconds(1))
+<<<<<<< Updated upstream
             .WithMessage("A data de abertura não pode ser maior que a data atual.");
+=======
+            .WithMessage("A data de abertura não pode ser maior que a data atual");
+>>>>>>> Stashed changes
 
         RuleFor(conta => conta.TipoConta)
             .IsInEnum()

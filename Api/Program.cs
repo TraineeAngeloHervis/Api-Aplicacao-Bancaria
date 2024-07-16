@@ -1,7 +1,10 @@
 using Infra.Data;
 using Api.Configuration;
+<<<<<<< Updated upstream
 using Api.Middleware;
 using Crosscutting.Validators;
+=======
+>>>>>>> Stashed changes
 using Domain.Interfaces;
 using Domain.Services;
 using Infra.Data.Repository;

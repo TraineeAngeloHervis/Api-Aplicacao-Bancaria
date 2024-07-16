@@ -1,6 +1,9 @@
 ﻿using Crosscutting.Dto;
 using Domain.Interfaces;
+<<<<<<< Updated upstream
 using FluentValidation;
+=======
+>>>>>>> Stashed changes
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -31,9 +34,15 @@ public class ClienteController : ControllerBase
     }
 
     [HttpPut("atualizar/{id:guid}")]
+<<<<<<< Updated upstream
     public async Task<IActionResult> AtualizarCliente(Guid id, [FromBody] ClienteRequestDto clienteRequestDto)
     {
         var clienteAtualizado = await _clienteService.AtualizarCliente(id, clienteRequestDto);
+=======
+    public IActionResult AtualizarCliente(Guid id, [FromBody] ClienteRequestDto clienteRequestDto)
+    {
+        var clienteAtualizado = _clienteService.AtualizarCliente(id, clienteRequestDto);
+>>>>>>> Stashed changes
         return clienteAtualizado == null ? NotFound() : Ok(clienteAtualizado);
     }
 

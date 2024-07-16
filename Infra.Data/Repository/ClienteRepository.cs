@@ -1,6 +1,9 @@
 using Domain.Entities;
 using Domain.Interfaces;
+<<<<<<< Updated upstream
 using Microsoft.EntityFrameworkCore;
+=======
+>>>>>>> Stashed changes
 
 namespace Infra.Data.Repository;
 
