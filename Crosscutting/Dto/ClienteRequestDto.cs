@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Crosscutting.Enums;
 
-namespace Crosscutting.Dto.Clientes;
+namespace Crosscutting.Dto;
 
 public class ClienteRequestDto
 {

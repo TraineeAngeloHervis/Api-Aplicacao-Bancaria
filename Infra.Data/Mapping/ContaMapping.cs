@@ -1,4 +1,4 @@
-using Domain.Contas.Entities;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -11,6 +11,11 @@ public class ContaMapping : IEntityTypeConfiguration<Conta>
         builder.ToTable("Contas");
 
         builder.HasKey(x => x.Id);
+        
+        builder.Property(x => x.Id)
+            .ValueGeneratedOnAdd()
+            .IsRequired()
+            .HasColumnType("char(36)");
 
         builder.Property(x => x.ClienteId)
             .IsRequired();
@@ -24,5 +29,9 @@ public class ContaMapping : IEntityTypeConfiguration<Conta>
         builder.Property(x => x.TipoConta)
             .IsRequired()
             .HasMaxLength(20);
+
+        builder.HasOne(c => c.Cliente)
+            .WithMany(c => c.Contas)
+            .HasForeignKey(c => c.ClienteId);
     }
 }

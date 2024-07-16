@@ -1,6 +1,6 @@
+using Crosscutting.Dto;
 using Microsoft.AspNetCore.Mvc;
-using Crosscutting.Dto.Contas;
-using Domain.Contas.Interfaces;
+using Domain.Interfaces;
 
 namespace Api.Controllers;
 
@@ -14,39 +14,39 @@ public class ContaController : ControllerBase
     {
         _contaService = contaService;
     }
-
-    [HttpPost]
-    public IActionResult CadastrarConta([FromBody] ContaRequestDto contaRequestDto)
+    
+    [HttpPost("cadastrar/{clienteId:guid}")]
+    public IActionResult CadastrarConta(Guid clienteId, [FromBody] ContaRequestDto contaRequestDto)
     {
-        var contaCadastrada = _contaService.CadastrarConta(contaRequestDto);
-        return CreatedAtAction(nameof(ConsultarConta), new { id = contaCadastrada.Id }, contaCadastrada);
+        var contaCadastrada = _contaService.CadastrarConta(clienteId, contaRequestDto);
+        return CreatedAtAction(nameof(ConsultarConta), new { clienteId, id = contaCadastrada.Id }, contaCadastrada);
     }
-
-    [HttpPut]
-    public IActionResult AtualizarConta([FromBody] ContaRequestDto contaRequestDto)
+    
+    [HttpPut("atualizar/{clienteId:guid}/{id:guid}")]
+    public IActionResult AtualizarConta(Guid clienteId, Guid id, [FromBody] ContaRequestDto contaRequestDto)
     {
-        var contaAtualizada = _contaService.AtualizarConta(contaRequestDto);
-        return Ok(contaAtualizada);
+        var contaAtualizada = _contaService.AtualizarConta(clienteId, contaRequestDto, id);
+        return contaAtualizada == null ? NotFound() : Ok(contaAtualizada);
     }
-
-    [HttpDelete("{id:guid}")]
-    public IActionResult ExcluirConta(Guid id)
+    
+    [HttpDelete("excluir/{clienteId:guid}/{id:guid}")]
+    public IActionResult ExcluirConta(Guid clienteId, Guid id)
     {
-        var contaExcluida = _contaService.ExcluirConta(id);
+        var contaExcluida = _contaService.ExcluirConta(clienteId, id);
         return contaExcluida ? NoContent() : NotFound();
     }
-
-    [HttpGet("{id:guid}")]
-    public IActionResult ConsultarConta(Guid id)
+    
+    [HttpGet("consultar/{clienteId:guid}/{id:guid}")]
+    public IActionResult ConsultarConta(Guid clienteId, Guid id)
     {
-        var conta = _contaService.ConsultarConta(id);
+        var conta = _contaService.ConsultarConta(clienteId, id);
         return conta == null ? NotFound() : Ok(conta);
     }
-
-    [HttpGet]
-    public IActionResult ListarContas()
+    
+    [HttpGet("listar/{clienteId:guid}")]
+    public IActionResult ListarContas(Guid clienteId)
     {
-        var contas = _contaService.ListarContas();
+        var contas = _contaService.ListarContas(clienteId);
         return Ok(contas);
     }
 }

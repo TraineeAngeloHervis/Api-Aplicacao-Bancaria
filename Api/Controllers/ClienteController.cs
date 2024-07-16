@@ -1,5 +1,5 @@
-﻿using Crosscutting.Dto.Clientes;
-using Domain.Clientes.Interfaces;
+﻿using Crosscutting.Dto;
+using Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -22,11 +22,11 @@ public class ClienteController : ControllerBase
         return CreatedAtAction(nameof(ConsultarCliente), new { id = clienteCadastrado.Id }, clienteCadastrado);
     }
 
-    [HttpPut("atualizar")]
-    public IActionResult AtualizarCliente([FromBody] ClienteRequestDto clienteRequestDto)
+    [HttpPut("atualizar/{id:guid}")]
+    public IActionResult AtualizarCliente(Guid id, [FromBody] ClienteRequestDto clienteRequestDto)
     {
-        var clienteAtualizado = _clienteService.AtualizarCliente(clienteRequestDto);
-        return Ok(clienteAtualizado);
+        var clienteAtualizado = _clienteService.AtualizarCliente(id, clienteRequestDto);
+        return clienteAtualizado == null ? NotFound() : Ok(clienteAtualizado);
     }
 
     [HttpDelete("excluir/{id:guid}")]

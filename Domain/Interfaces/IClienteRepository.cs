@@ -1,6 +1,6 @@
-using Domain.Clientes.Entities;
+using Domain.Entities;
 
-namespace Domain.Clientes.Interfaces;
+namespace Domain.Interfaces;
 
 public interface IClienteRepository
 {

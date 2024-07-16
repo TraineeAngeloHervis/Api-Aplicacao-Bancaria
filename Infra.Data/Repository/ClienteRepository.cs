@@ -1,5 +1,5 @@
-using Domain.Clientes.Entities;
-using Domain.Clientes.Interfaces;
+using Domain.Entities;
+using Domain.Interfaces;
 
 namespace Infra.Data.Repository;
 
@@ -30,7 +30,7 @@ public class ClienteRepository(AppDbContext context) : IClienteRepository
 
     public Cliente ConsultarCliente(Guid id)
     {
-        return context.Clientes.Find(id);
+        return context.Clientes.FirstOrDefault(c => c.Id == id);
     }
 
     public IEnumerable<Cliente> ListarClientes()

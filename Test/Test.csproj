@@ -10,10 +10,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="coverlet.collector" Version="6.0.0"/>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0"/>
-        <PackageReference Include="xunit" Version="2.5.3"/>
-        <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3"/>
+        <PackageReference Include="Bogus" Version="35.5.1" />
+        <PackageReference Include="FluentAssertions" Version="7.0.0-alpha.4" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0-release-24352-06" />
+        <PackageReference Include="Moq" Version="4.20.70" />
+        <PackageReference Include="xunit" Version="2.9.0" />
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.8.1">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
@@ -21,15 +26,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Api\Controllers\" />
-      <Folder Include="Api\Services\" />
-      <Folder Include="Crosscutting\Dto\" />
-      <Folder Include="Domain\Clientes\Entities\" />
-      <Folder Include="Domain\Clientes\Interfaces\" />
-      <Folder Include="Domain\Clientes\Models\" />
-      <Folder Include="Domain\Contas\Entities\" />
-      <Folder Include="Domain\Contas\Interfaces\" />
-      <Folder Include="Domain\Contas\Models\" />
+      <Folder Include="Crosscutting\" />
+      <Folder Include="Domain\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Api\Api.csproj" />
     </ItemGroup>
 
 </Project>

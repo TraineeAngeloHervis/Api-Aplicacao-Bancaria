@@ -1,6 +1,6 @@
 using Crosscutting.Enums;
 
-namespace Domain.Clientes.Entities;
+namespace Domain.Entities;
 
 public class Cliente
 {
@@ -9,4 +9,5 @@ public class Cliente
     public string Cpf { get; set; }
     public DateTime DataNascimento { get; set; }
     public EstadoCivil EstadoCivil { get; set; }
+    public ICollection<Conta> Contas { get; set; }
 }
