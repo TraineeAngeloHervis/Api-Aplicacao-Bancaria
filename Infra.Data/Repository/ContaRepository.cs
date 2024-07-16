@@ -26,19 +26,19 @@ public class ContaRepository(AppDbContext context) : IContaRepository
         return contaDb;
     }
 
-    public bool ExcluirConta(Guid clienteId, Guid id)
+    public bool ExcluirConta(Guid id)
     {
-        var contaDb = context.Contas.FirstOrDefault(c => c.Id == id && c.ClienteId == clienteId);
-        if (contaDb == null) return false;
+        var conta = context.Contas.FirstOrDefault(c => c.Id == id);
+        if (conta == null) return false;
 
-        context.Contas.Remove(contaDb);
+        context.Contas.Remove(conta);
         context.SaveChanges();
         return true;
     }
 
-    public Conta ConsultarConta(Guid clienteId, Guid id)
+    public Conta ConsultarConta(Guid id)
     {
-        return context.Contas.FirstOrDefault(c => c.Id == id && c.ClienteId == clienteId);
+        return context.Contas.FirstOrDefault(c => c.Id == id);
     }
 
     public IEnumerable<Conta> ListarContas(Guid clienteId)

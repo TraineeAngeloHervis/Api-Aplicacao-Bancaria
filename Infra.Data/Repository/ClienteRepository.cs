@@ -5,10 +5,10 @@ namespace Infra.Data.Repository;
 
 public class ClienteRepository(AppDbContext context) : IClienteRepository
 {
-    public Cliente CadastrarCliente(Cliente cliente)
+    public async Task<Cliente> CadastrarCliente(Cliente cliente)
     {
-        context.Clientes.Add(cliente);
-        context.SaveChanges();
+        await context.Clientes.AddAsync(cliente);
+        await context.SaveChangesAsync();
         return cliente;
     }
 
