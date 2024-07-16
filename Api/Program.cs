@@ -16,7 +16,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         "AcessoTotal",
-        builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
+        policyBuilder => policyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
     );
 });
 

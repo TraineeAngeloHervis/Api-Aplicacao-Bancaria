@@ -1,5 +1,6 @@
 ﻿using Crosscutting.Dto;
 using Domain.Interfaces;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -18,8 +19,15 @@ public class ClienteController : ControllerBase
     [HttpPost("cadastrar")]
     public async Task<IActionResult> CadastrarCliente([FromBody] ClienteRequestDto clienteRequestDto)
     {
-        var clienteCadastrado = await _clienteService.CadastrarCliente(clienteRequestDto);
-        return CreatedAtAction(nameof(ConsultarCliente), new { id = clienteCadastrado.Id }, clienteCadastrado);
+        try
+        {
+            var clienteCadastrado = await _clienteService.CadastrarCliente(clienteRequestDto);
+            return CreatedAtAction(nameof(ConsultarCliente), new { id = clienteCadastrado.Id }, clienteCadastrado);
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(new { Errors = ex.Errors.Select(e => e.ErrorMessage) });
+        }
     }
 
     [HttpPut("atualizar/{id:guid}")]

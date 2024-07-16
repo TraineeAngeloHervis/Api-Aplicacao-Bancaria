@@ -1,5 +1,4 @@
 using Crosscutting.Dto;
-using Domain.Entities;
 
 namespace Domain.Interfaces;
 

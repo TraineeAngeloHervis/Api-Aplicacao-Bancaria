@@ -4,7 +4,7 @@ namespace Domain.Entities;
 
 public class Cliente
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; init; }
     public string Nome { get; set; }
     public string Cpf { get; set; }
     public DateTime DataNascimento { get; set; }

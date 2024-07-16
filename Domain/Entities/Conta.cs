@@ -4,8 +4,8 @@ namespace Domain.Entities;
 
 public class Conta
 {
-    public Guid Id { get; set; }
-    public Guid ClienteId { get; set; }
+    public Guid Id { get; init; }
+    public Guid ClienteId { get; init; }
     public Cliente Cliente { get; set; }
     public decimal SaldoInicial { get; set; }
     public DateTime DataAbertura { get; set; } = DateTime.Now;

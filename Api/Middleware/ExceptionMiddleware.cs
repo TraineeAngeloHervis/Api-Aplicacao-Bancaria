@@ -10,45 +10,31 @@ public static class ExceptionMiddleware
 {
     public static void TratarExcecao(this IApplicationBuilder app)
     {
-        app.UseExceptionHandler(appBuilder =>
+        app.UseExceptionHandler(errorApp =>
         {
-            appBuilder.Run(async context =>
+            errorApp.Run(async context =>
             {
-                context.Response.ContentType = "application/json";
+                var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+                var exception = exceptionHandlerPathFeature.Error;
 
-                var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
-                if (contextFeature != null)
+                var statusCode = HttpStatusCode.InternalServerError;
+                var message = "Ocorreu um erro interno no servidor.";
+
+                switch (exception)
                 {
-                    var exception = contextFeature.Error;
-                    var response = context.Response;
-                    var message = exception.Message;
-                    var statusCode = (int)HttpStatusCode.InternalServerError;
-
-                    switch (exception)
-                    {
-                        case ValidationException validationException:
-                            statusCode = (int)HttpStatusCode.BadRequest;
-                            var validationErrors = validationException.Errors.Select(e => e.ErrorMessage).ToList();
-                            message = string.Join(" ", validationErrors);
-                            break;
-                        case ClienteNaoEncontradoException _:
-                            statusCode = (int)HttpStatusCode.NotFound;
-                            break;
-                        case ClienteInvalidoException _:
-                            statusCode = (int)HttpStatusCode.BadRequest;
-                            break;
-                        case ContaInvalidaException _:
-                            statusCode = (int)HttpStatusCode.BadRequest;
-                            break;
-                        case ContaNaoEncontradaException _:
-                            statusCode = (int)HttpStatusCode.NotFound;
-                            break;
-                    }
-
-                    response.StatusCode = statusCode;
-                    var result = JsonSerializer.Serialize(new { message });
-                    await response.WriteAsync(result);
+                    case ValidationException ex:
+                        statusCode = HttpStatusCode.BadRequest;
+                        message = JsonSerializer.Serialize(new { Errors = ex.Errors.Select(e => e.ErrorMessage) });
+                        break;
+                    case ClienteNaoEncontradoException _:
+                        statusCode = HttpStatusCode.NotFound;
+                        message = "Cliente não encontrado.";
+                        break;
                 }
+
+                context.Response.StatusCode = (int)statusCode;
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsync(message);
             });
         });
     }

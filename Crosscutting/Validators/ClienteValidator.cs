@@ -25,4 +25,14 @@ public class ClienteValidator : AbstractValidator<ClienteRequestDto>
             .IsInEnum()
             .WithMessage("Estado civil inválido.");
     }
+
+    public void ValidarCliente(ClienteRequestDto clienteRequestDto)
+    {
+        var validationResult = Validate(clienteRequestDto);
+        if (!validationResult.IsValid)
+        {
+            var errors = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
+            throw new ValidationException(errors);
+        }
+    }
 }
