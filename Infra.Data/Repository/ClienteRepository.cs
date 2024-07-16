@@ -1,45 +1,40 @@
 using Domain.Entities;
 using Domain.Interfaces;
-<<<<<<< Updated upstream
-using Microsoft.EntityFrameworkCore;
-=======
->>>>>>> Stashed changes
 
 namespace Infra.Data.Repository;
 
 public class ClienteRepository(AppDbContext context) : IClienteRepository
 {
-    public async Task<Cliente> CadastrarCliente(Cliente cliente)
+    public Cliente CadastrarCliente(Cliente cliente)
     {
-        await context.Clientes.AddAsync(cliente);
-        await context.SaveChangesAsync();
+        context.Clientes.Add(cliente);
+        context.SaveChanges();
         return cliente;
     }
 
-    public async Task<Cliente> AtualizarCliente(Cliente cliente)
+    public Cliente AtualizarCliente(Cliente cliente)
     {
         context.Clientes.Update(cliente);
-        await context.SaveChangesAsync();
+        context.SaveChanges();
         return cliente;
     }
-    
-    public async Task<bool> ExcluirCliente(Guid id)
-    {
-        var cliente = await context.Clientes.FindAsync(id);
-        if (cliente == null) return false;
 
+    public bool ExcluirCliente(Guid id)
+    {
+        var cliente = context.Clientes.Find(id);
+        if (cliente is null) return false;
         context.Clientes.Remove(cliente);
-        await context.SaveChangesAsync();
+        context.SaveChanges();
         return true;
     }
 
-    public async Task<Cliente> ConsultarCliente(Guid id)
+    public Cliente ConsultarCliente(Guid id)
     {
-        return await context.Clientes.FindAsync(id);
+        return context.Clientes.FirstOrDefault(c => c.Id == id);
     }
 
-    public async Task<IEnumerable<Cliente>> ListarClientes()
+    public IEnumerable<Cliente> ListarClientes()
     {
-        return await context.Clientes.ToListAsync();
+        return context.Clientes.ToList();
     }
 }

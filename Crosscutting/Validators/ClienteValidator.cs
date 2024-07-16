@@ -1,4 +1,5 @@
 using Crosscutting.Dto;
+using Crosscutting.Exceptions;
 using FluentValidation;
 
 namespace Crosscutting.Validators;
@@ -13,7 +14,6 @@ public class ClienteValidator : AbstractValidator<ClienteRequestDto>
 
         RuleFor(cliente => cliente.Cpf)
             .NotEmpty()
-            .WithMessage("O CPF do cliente é obrigatório.")
             .Matches(@"\d{11}")
             .WithMessage("O CPF do cliente é inválido.");
 
@@ -25,14 +25,14 @@ public class ClienteValidator : AbstractValidator<ClienteRequestDto>
             .IsInEnum()
             .WithMessage("Estado civil inválido.");
     }
-
+    
     public void ValidarCliente(ClienteRequestDto clienteRequestDto)
     {
         var validationResult = Validate(clienteRequestDto);
         if (!validationResult.IsValid)
         {
-            var errors = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
-            throw new ValidationException(errors);
+            var firstError = validationResult.Errors[0];
+            throw new ClienteInvalidoException(firstError.ErrorMessage);
         }
     }
 }

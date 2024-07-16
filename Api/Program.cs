@@ -1,10 +1,7 @@
 using Infra.Data;
 using Api.Configuration;
-<<<<<<< Updated upstream
 using Api.Middleware;
 using Crosscutting.Validators;
-=======
->>>>>>> Stashed changes
 using Domain.Interfaces;
 using Domain.Services;
 using Infra.Data.Repository;
@@ -19,7 +16,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         "AcessoTotal",
-        policyBuilder => policyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
+        builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
     );
 });
 
