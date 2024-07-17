@@ -1,8 +1,8 @@
-﻿using Crosscutting.Validators;
+﻿using Crosscutting.Dto;
 
 namespace Domain.Interfaces;
 
 public interface IContaValidator
 {
-    Task<bool> EhValido(ContaValidator contaValidator);
+    bool EhValido(ContaRequestDto contaRequestDto, out IList<string> errors);
 }

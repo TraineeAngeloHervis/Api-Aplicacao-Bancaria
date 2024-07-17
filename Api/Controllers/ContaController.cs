@@ -1,82 +1,73 @@
 using Crosscutting.Dto;
-using Crosscutting.Validators;
 using Domain.Interfaces;
+using Domain.Validators;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Api.Controllers
+namespace Api.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class ContaController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class ContaController : ControllerBase
+    private readonly IContaService _contaService;
+    private readonly IClienteService _clienteService;
+    private readonly ContaValidator _contaValidator;
+
+    public ContaController(IContaService contaService, IClienteService clienteService, ContaValidator contaValidator)
     {
-        private readonly IContaService _contaService;
-        private readonly IClienteService _clienteService;
-        private readonly ContaValidator _contaValidator;
+        _contaService = contaService;
+        _clienteService = clienteService;
+        _contaValidator = contaValidator;
+    }
 
-        public ContaController(IContaService contaService, IClienteService clienteService, ContaValidator contaValidator)
+    [HttpPost("cadastrar")]
+    public IActionResult CadastrarConta([FromBody] ContaRequestDto contaRequestDto)
+    {
+        if (!_contaValidator.EhValido(contaRequestDto, out var errors))
         {
-            _contaService = contaService;
-            _clienteService = clienteService;
-            _contaValidator = contaValidator;
+            return BadRequest(errors);
         }
 
-        [HttpPost("cadastrar")]
-        public IActionResult CadastrarConta([FromBody] ContaRequestDto contaRequestDto)
+        var cliente = _clienteService.ConsultarCliente(contaRequestDto.ClienteId);
+        if (cliente == null)
         {
-            var validationResult = _contaValidator.Validate(contaRequestDto);
-            if (!validationResult.IsValid)
-            {
-                return BadRequest(validationResult.Errors);
-            }
-            
-            var cliente = _clienteService.ConsultarCliente(contaRequestDto.ClienteId);
-            if (cliente == null)
-            {
-                return NotFound($"Cliente com ID {contaRequestDto.ClienteId} não encontrado.");
-            }
-            
-            var contaCadastrada = _contaService.CadastrarConta(contaRequestDto.ClienteId, contaRequestDto);
-            return CreatedAtAction(nameof(ConsultarConta), new { id = contaCadastrada.Id }, contaCadastrada);
+            return NotFound($"Cliente com ID {contaRequestDto.ClienteId} não encontrado.");
         }
 
-        [HttpPut("atualizar/{id:guid}")]
-        public IActionResult AtualizarConta(Guid id, [FromBody] ContaRequestDto contaRequestDto)
-        {
-            var validationResult = _contaValidator.Validate(contaRequestDto);
-            if (!validationResult.IsValid)
-            {
-                return BadRequest(validationResult.Errors);
-            }
+        var contaCadastrada = _contaService.CadastrarConta(contaRequestDto.ClienteId, contaRequestDto);
+        return CreatedAtAction(nameof(ConsultarConta), new { id = contaCadastrada.Id }, contaCadastrada);
+    }
 
-            var cliente = _clienteService.ConsultarCliente(contaRequestDto.ClienteId);
-            if (cliente == null)
-            {
-                return NotFound($"Cliente com ID {contaRequestDto.ClienteId} não encontrado.");
-            }
-            
-            var contaAtualizada = _contaService.AtualizarConta(contaRequestDto.ClienteId, contaRequestDto, id);
-            return contaAtualizada == null ? NotFound() : Ok(contaAtualizada);
+    [HttpPut("atualizar/{id:guid}")]
+    public IActionResult AtualizarConta(Guid id, [FromBody] ContaRequestDto contaRequestDto)
+    {
+        if (!_contaValidator.EhValido(contaRequestDto, out var errors))
+        {
+            return BadRequest(errors);
         }
 
-        [HttpDelete("excluir/{id:guid}")]
-        public IActionResult ExcluirConta(Guid id)
-        {
-            var contaExcluida = _contaService.ExcluirConta(id);
-            return contaExcluida ? NoContent() : NotFound();
-        }
+        var contaAtualizada = _contaService.AtualizarConta(contaRequestDto.ClienteId, contaRequestDto, id);
+        return contaAtualizada == null ? NotFound() : Ok(contaAtualizada);
+    }
 
-        [HttpGet("consultar/{id:guid}")]
-        public IActionResult ConsultarConta(Guid id)
-        {
-            var conta = _contaService.ConsultarConta(id);
-            return conta == null ? NotFound() : Ok(conta);
-        }
+    [HttpDelete("excluir/{id:guid}")]
+    public IActionResult ExcluirConta(Guid id)
+    {
+        var contaExcluida = _contaService.ExcluirConta(id);
+        return contaExcluida ? NoContent() : NotFound();
+    }
 
-        [HttpGet("listar/{clienteId:guid}")]
-        public IActionResult ListarContas(Guid clienteId)
-        {
-            var contas = _contaService.ListarContas(clienteId);
-            return Ok(contas);
-        }
+    [HttpGet("consultar/{id:guid}")]
+    public IActionResult ConsultarConta(Guid id)
+    {
+        var conta = _contaService.ConsultarConta(id);
+        return conta == null ? NotFound() : Ok(conta);
+    }
+
+    [HttpGet("listar/{clienteId:guid}")]
+    public IActionResult ListarContas(Guid clienteId)
+    {
+        var contas = _contaService.ListarContas(clienteId);
+        return Ok(contas);
     }
 }

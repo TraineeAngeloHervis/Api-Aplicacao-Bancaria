@@ -15,22 +15,15 @@ public class ContaRepository(AppDbContext context) : IContaRepository
 
     public Conta AtualizarConta(Guid clienteId, Conta conta)
     {
-        var contaDb = context.Contas.FirstOrDefault(c => c.Id == conta.Id && c.ClienteId == clienteId);
-        if (contaDb == null) return null;
-
-        contaDb.SaldoInicial = conta.SaldoInicial;
-        contaDb.TipoConta = conta.TipoConta;
-
-        context.Contas.Update(contaDb);
+        context.Contas.Update(conta);
         context.SaveChanges();
-        return contaDb;
+        return conta;
     }
 
     public bool ExcluirConta(Guid id)
     {
-        var conta = context.Contas.FirstOrDefault(c => c.Id == id);
-        if (conta == null) return false;
-
+        var conta = context.Contas.Find(id);
+        if (conta is null) return false;
         context.Contas.Remove(conta);
         context.SaveChanges();
         return true;

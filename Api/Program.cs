@@ -1,9 +1,9 @@
 using Infra.Data;
 using Api.Configuration;
 using Api.Middleware;
-using Crosscutting.Validators;
 using Domain.Interfaces;
 using Domain.Services;
+using Domain.Validators;
 using Infra.Data.Repository;
 using FluentValidation;
 
@@ -28,6 +28,8 @@ builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IContaService, ContaService>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IContaRepository, ContaRepository>();
+builder.Services.AddScoped<IClienteValidator, ClienteValidator>();
+builder.Services.AddScoped<IContaValidator, ContaValidator>();
 
 
 builder.Services.AddConfiguracaoAutoMapper();

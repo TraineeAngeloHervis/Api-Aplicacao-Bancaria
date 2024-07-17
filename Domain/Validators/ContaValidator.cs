@@ -1,9 +1,10 @@
 using Crosscutting.Dto;
+using Domain.Interfaces;
 using FluentValidation;
 
-namespace Crosscutting.Validators;
+namespace Domain.Validators;
 
-public class ContaValidator : AbstractValidator<ContaRequestDto>
+public class ContaValidator : AbstractValidator<ContaRequestDto>, IContaValidator
 {
     public ContaValidator()
     {
@@ -22,5 +23,12 @@ public class ContaValidator : AbstractValidator<ContaRequestDto>
         RuleFor(conta => conta.TipoConta)
             .IsInEnum()
             .WithMessage("Tipo de conta inválido");
+    }
+
+    public bool EhValido(ContaRequestDto contaRequestDto, out IList<string> errors)
+    {
+        var result = Validate(contaRequestDto);
+        errors = result.Errors.Select(e => e.ErrorMessage).ToList();
+        return result.IsValid;
     }
 }
