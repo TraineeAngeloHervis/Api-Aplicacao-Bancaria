@@ -10,6 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoMapper" Version="13.0.1" />
         <PackageReference Include="Bogus" Version="35.5.1" />
         <PackageReference Include="FluentAssertions" Version="7.0.0-alpha.4" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0-release-24352-06" />
@@ -26,12 +27,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Crosscutting\" />
-      <Folder Include="Domain\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <ProjectReference Include="..\Api\Api.csproj" />
+        <ProjectReference Include="..\Domain\Domain.csproj" />
     </ItemGroup>
 
 </Project>

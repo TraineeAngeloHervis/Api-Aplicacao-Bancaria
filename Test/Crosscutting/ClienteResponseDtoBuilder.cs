@@ -3,48 +3,55 @@ using Bogus.Extensions.Brazil;
 using Crosscutting.Dto;
 using Crosscutting.Enums;
 
-namespace Test.Builders;
+namespace Test.Crosscutting;
 
-public class ClienteRequestDtoBuilder
+public class ClienteResponseDtoBuilder
 {
-    private readonly Faker<ClienteRequestDto> _faker;
+    private readonly Faker<ClienteResponseDto> _faker;
 
-    private ClienteRequestDtoBuilder()
+    private ClienteResponseDtoBuilder()
     {
-        _faker = new Faker<ClienteRequestDto>("pt_BR")
+        _faker = new Faker<ClienteResponseDto>("pt_BR")
+            .RuleFor(x => x.Id, f => f.Random.Guid())
             .RuleFor(x => x.Nome, f => f.Person.FullName)
             .RuleFor(x => x.Cpf, f => f.Person.Cpf())
             .RuleFor(x => x.DataNascimento, f => f.Person.DateOfBirth)
             .RuleFor(x => x.EstadoCivil, f => f.PickRandom<EstadoCivil>());
     }
 
-    public static ClienteRequestDtoBuilder Novo()
+    public static ClienteResponseDtoBuilder Novo()
         => new();
 
-    public ClienteRequestDtoBuilder ComNome(string nome)
+    public ClienteResponseDtoBuilder ComId(Guid id)
+    {
+        _faker.RuleFor(x => x.Id, f => id);
+        return this;
+    }
+
+    public ClienteResponseDtoBuilder ComNome(string nome)
     {
         _faker.RuleFor(x => x.Nome, f => nome);
         return this;
     }
 
-    public ClienteRequestDtoBuilder ComCpf(string cpf)
+    public ClienteResponseDtoBuilder ComCpf(string cpf)
     {
         _faker.RuleFor(x => x.Cpf, f => cpf);
         return this;
     }
 
-    public ClienteRequestDtoBuilder ComDataNascimento(DateTime dataNascimento)
+    public ClienteResponseDtoBuilder ComDataNascimento(DateTime dataNascimento)
     {
         _faker.RuleFor(x => x.DataNascimento, f => dataNascimento);
         return this;
     }
 
-    public ClienteRequestDtoBuilder ComEstadoCivil(EstadoCivil estadoCivil)
+    public ClienteResponseDtoBuilder ComEstadoCivil(EstadoCivil estadoCivil)
     {
         _faker.RuleFor(x => x.EstadoCivil, f => estadoCivil);
         return this;
     }
 
-    public ClienteRequestDto Build()
+    public ClienteResponseDto Build()
         => _faker.Generate();
 }

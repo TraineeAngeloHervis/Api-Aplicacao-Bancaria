@@ -1,128 +1,162 @@
 using Api.Controllers;
-using Bogus;
 using Crosscutting.Dto;
 using Domain.Interfaces;
 using Moq;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using Test.Builders;
+using Test.Crosscutting;
 
 namespace Test.Api;
 
 public class ClienteControllerTests
 {
-    private readonly Mock<IClienteService> _clienteServiceMock;
+    private readonly Mock<IClienteService> _clienteService;
+    private readonly Mock<IClienteValidator> _clienteValidator;
     private readonly ClienteController _clienteController;
-    
+
+
     public ClienteControllerTests()
     {
-        _clienteServiceMock = new Mock<IClienteService>();
-        _clienteController = new ClienteController(_clienteServiceMock.Object);
+        _clienteService = new Mock<IClienteService>();
+        _clienteValidator = new Mock<IClienteValidator>();
+        _clienteController = new ClienteController(_clienteService.Object, _clienteValidator.Object);
     }
 
     [Fact]
-    public void Cliente_QuandoCadastrarCliente_DeveRetornarCliente()
+    public async Task Cliente_QuandoCadastrarCliente_DeveRetornarCliente()
     {
         // Arrange
         var clienteRequestDto = ClienteRequestDtoBuilder.Novo().Build();
         var clienteResponseDto = ClienteResponseDtoBuilder.Novo().Build();
-        _clienteServiceMock
-            .Setup(x => x.CadastrarCliente(clienteRequestDto))
-            .Returns(clienteResponseDto);
         
+        _clienteValidator.Setup(v => v.EhValido(It
+                .IsAny<ClienteRequestDto>(), out It.Ref<IList<string>>.IsAny))
+            .Returns(true);
+        
+        _clienteService.Setup(x => x.CadastrarCliente(It
+                .IsAny<ClienteRequestDto>()))
+            .ReturnsAsync(clienteResponseDto);
+
         // Act
-        var resultadoEsperado = _clienteController.CadastrarCliente(clienteRequestDto) as CreatedAtActionResult;
-        
+        var resultadoEsperado = await _clienteController.CadastrarCliente(clienteRequestDto);
+
         // Assert
-        resultadoEsperado.Should().NotBeNull();
-        resultadoEsperado!.ActionName.Should().Be(nameof(ClienteController.ConsultarCliente));
+        resultadoEsperado.Should().BeOfType<CreatedAtActionResult>();
+        var createdAtActionResult = (CreatedAtActionResult)resultadoEsperado;
+        createdAtActionResult.Value.Should().Be(clienteResponseDto);
     }
-    
+
     [Fact]
-    public void Cliente_QuandoAtualizarCliente_DeveRetornarClienteAtualizado()
+    public async Task Cliente_QuandoAtualizarCliente_DeveRetornarClienteAtualizado()
     {
         // Arrange
-        var clienteNovo = ClienteResponseDtoBuilder.Novo().ComNome("Cliente Novo").Build();
-        var clienteAtualizado = ClienteResponseDtoBuilder.Novo().ComNome("Cliente Atualizado").Build();
-        _clienteServiceMock.Setup(x => x.AtualizarCliente(clienteNovo.Id, It.IsAny<ClienteRequestDto>())).Returns(clienteAtualizado);
-        
+        var clienteRequestDto = ClienteRequestDtoBuilder.Novo().Build();
+        var clienteResponseDto = ClienteResponseDtoBuilder.Novo().Build();
+
+        _clienteValidator.Setup(v => v.EhValido(It
+                .IsAny<ClienteRequestDto>(), out It.Ref<IList<string>>.IsAny))
+            .Returns(true);
+
+        _clienteService.Setup(x => x.AtualizarCliente(It
+                .IsAny<Guid>(), It.IsAny<ClienteRequestDto>()))
+            .ReturnsAsync(clienteResponseDto);
+
         // Act
-        var resultadoEsperado = _clienteController.AtualizarCliente(clienteNovo.Id, new ClienteRequestDto()) as OkObjectResult;
-        
+        var resultadoEsperado = await _clienteController
+            .AtualizarCliente(Guid.NewGuid(), clienteRequestDto);
+
         // Assert
-        resultadoEsperado.Should().NotBeNull();
-        resultadoEsperado!.Value.Should().Be(clienteAtualizado);
+        resultadoEsperado.Should().BeOfType<OkObjectResult>();
+        var okObjectResult = (OkObjectResult)resultadoEsperado;
+        okObjectResult.Value.Should().Be(clienteResponseDto);
     }
-    
+
+
     [Fact]
-    public void Cliente_QuandoExcluirCliente_DeveRetornarNoContent()
+    public async Task Cliente_QuandoExcluirCliente_DeveRetornarNoContent()
     {
         // Arrange
-        var cliente = ClienteResponseDtoBuilder.Novo().Build();
-        _clienteServiceMock.Setup(x => x.ExcluirCliente(cliente.Id)).Returns(true);
-        
+        _clienteService.Setup(x => x.ExcluirCliente(It.IsAny<Guid>()))
+            .ReturnsAsync(true);
+
         // Act
-        var resultadoEsperado = _clienteController.ExcluirCliente(cliente.Id) as NoContentResult;
-        
+        var resultadoEsperado = await _clienteController.ExcluirCliente(Guid.NewGuid());
+
         // Assert
-        resultadoEsperado.Should().NotBeNull();
+        resultadoEsperado.Should().BeOfType<NoContentResult>();
     }
-    
+
     [Fact]
-    public void Cliente_QuandoConsultarCliente_DeveRetornarCliente()
+    public async Task Cliente_QuandoConsultarCliente_DeveRetornarCliente()
     {
         // Arrange
-        var cliente = ClienteResponseDtoBuilder.Novo().Build();
-        _clienteServiceMock.Setup(x => x.ConsultarCliente(cliente.Id)).Returns(cliente);
-        
+        var clienteResponseDto = ClienteResponseDtoBuilder.Novo().Build();
+        _clienteService.Setup(x => x.ConsultarCliente(It.IsAny<Guid>()))
+            .ReturnsAsync(clienteResponseDto);
+
         // Act
-        var resultadoEsperado = _clienteController.ConsultarCliente(cliente.Id) as OkObjectResult;
-        
+        var resultadoEsperado = await _clienteController.ConsultarCliente(Guid.NewGuid());
+
         // Assert
-        resultadoEsperado.Should().NotBeNull();
-        resultadoEsperado!.Value.Should().Be(cliente);
+        resultadoEsperado.Should().BeOfType<OkObjectResult>();
+        var okObjectResult = (OkObjectResult)resultadoEsperado;
+        okObjectResult.Value.Should().Be(clienteResponseDto);
     }
-    
+
     [Fact]
-    public void Cliente_QuandoConsultarClienteInexistente_DeveRetornarNotFound()
+    public async Task Cliente_QuandoConsultarClienteInexistente_DeveRetornarNotFound()
     {
         // Arrange
-        var cliente = ClienteResponseDtoBuilder.Novo().Build();
-        _clienteServiceMock.Setup(x => x.ConsultarCliente(cliente.Id)).Returns((ClienteResponseDto)null);
-        
+        _clienteService.Setup(x => x.ConsultarCliente(It.IsAny<Guid>()))
+            .ReturnsAsync((ClienteResponseDto)null);
+
         // Act
-        var resultadoEsperado = _clienteController.ConsultarCliente(cliente.Id) as NotFoundResult;
-        
+        var resultadoEsperado = await _clienteController.ConsultarCliente(Guid.NewGuid());
+
         // Assert
-        resultadoEsperado.Should().NotBeNull();
+        resultadoEsperado.Should().BeOfType<NotFoundResult>();
     }
-    
+
     [Fact]
-    public void Cliente_QuandoListarClientes_DeveRetornarClientes()
+    public async Task Cliente_QuandoListarClientes_DeveRetornarClientes()
     {
         // Arrange
-        var clientes = new Faker<ClienteResponseDto>("pt_BR").Generate(10);
-        _clienteServiceMock.Setup(x => x.ListarClientes()).Returns(clientes);
-        
+        var clientes = new List<ClienteResponseDto>
+        {
+            ClienteResponseDtoBuilder.Novo().Build(),
+            ClienteResponseDtoBuilder.Novo().Build(),
+            ClienteResponseDtoBuilder.Novo().Build()
+        };
+
+        _clienteService.Setup(x => x.ListarClientes())
+            .ReturnsAsync(clientes);
+
         // Act
-        var resultadoEsperado = _clienteController.ListarClientes() as OkObjectResult;
-        
+        var resultadoEsperado = await _clienteController.ListarClientes();
+        var okObjectResult = (OkObjectResult)resultadoEsperado;
+        var clientesRetornados = okObjectResult.Value as List<ClienteResponseDto>;
+
         // Assert
-        resultadoEsperado.Should().NotBeNull();
-        resultadoEsperado!.Value.Should().Be(clientes);
+        resultadoEsperado.Should().BeOfType<OkObjectResult>();
+        clientesRetornados.Should().NotBeNull();
+        clientesRetornados.Should().HaveCount(3);
     }
-    
+
     [Fact]
-    public void Cliente_QuandoListarClientesVazio_DeveRetornarListaVazia()
+    public async Task Cliente_QuandoListarClientesVazio_DeveRetornarListaVazia()
     {
         // Arrange
-        _clienteServiceMock.Setup(x => x.ListarClientes()).Returns(new List<ClienteResponseDto>());
-        
+        _clienteService.Setup(x => x.ListarClientes())
+            .ReturnsAsync(new List<ClienteResponseDto>());
+
         // Act
-        var resultadoEsperado = _clienteController.ListarClientes() as OkObjectResult;
-        
+        var resultadoEsperado = await _clienteController.ListarClientes();
+        var okObjectResult = (OkObjectResult)resultadoEsperado;
+        var clientes = okObjectResult.Value as List<ClienteResponseDto>;
+
         // Assert
-        resultadoEsperado.Should().NotBeNull();
-        resultadoEsperado!.Value.As<IEnumerable<ClienteResponseDto>>().Should().BeEmpty();
+        resultadoEsperado.Should().BeOfType<OkObjectResult>();
+        clientes.Should().NotBeNull();
+        clientes.Should().HaveCount(0);
     }
 }

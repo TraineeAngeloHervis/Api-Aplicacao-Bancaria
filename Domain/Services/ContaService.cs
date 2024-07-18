@@ -2,6 +2,8 @@ using AutoMapper;
 using Crosscutting.Dto;
 using Domain.Entities;
 using Domain.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Domain.Services;
 
@@ -16,34 +18,35 @@ public class ContaService : IContaService
         _mapper = mapper;
     }
     
-    public ContaResponseDto CadastrarConta(Guid clienteId, ContaRequestDto contaRequestDto)
+    public async Task<ContaResponseDto> CadastrarConta(ContaRequestDto contaRequestDto, Guid clienteId)
     {
         var conta = _mapper.Map<Conta>(contaRequestDto);
-        var contaCadastrada = _contaRepository.CadastrarConta(clienteId, conta);
+        var contaCadastrada = await _contaRepository.CadastrarConta(clienteId, conta);
         return _mapper.Map<ContaResponseDto>(contaCadastrada);
     }
     
-    public ContaResponseDto AtualizarConta(Guid clienteId, ContaRequestDto contaRequestDto, Guid id)
+    public async Task<ContaResponseDto> AtualizarConta(Guid clienteId, ContaRequestDto contaRequestDto, Guid id)
     {
         var conta = _mapper.Map<Conta>(contaRequestDto);
-        var contaAtualizada = _contaRepository.AtualizarConta(clienteId, conta);
+        conta.Id = id;
+        var contaAtualizada = await _contaRepository.AtualizarConta(clienteId, conta);
         return _mapper.Map<ContaResponseDto>(contaAtualizada);
     }
     
-    public bool ExcluirConta(Guid id)
+    public async Task<bool> ExcluirConta(Guid id)
     {
-        return _contaRepository.ExcluirConta(id);
+        return await _contaRepository.ExcluirConta(id);
     }
     
-    public ContaResponseDto ConsultarConta(Guid id)
+    public async Task<ContaResponseDto> ConsultarConta(Guid id)
     {
-        var conta = _contaRepository.ConsultarConta(id);
+        var conta = await _contaRepository.ConsultarConta(id);
         return _mapper.Map<ContaResponseDto>(conta);
     }
     
-    public IEnumerable<ContaResponseDto> ListarContas(Guid clienteId)
+    public async Task<IEnumerable<ContaResponseDto>> ListarContas(Guid clienteId)
     {
-        var contas = _contaRepository.ListarContas(clienteId);
+        var contas = await _contaRepository.ListarContas(clienteId);
         return _mapper.Map<IEnumerable<ContaResponseDto>>(contas);
     }
 }

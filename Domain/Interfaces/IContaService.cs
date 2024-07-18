@@ -4,9 +4,9 @@ namespace Domain.Interfaces;
 
 public interface IContaService
 {
-    ContaResponseDto CadastrarConta(Guid clienteId, ContaRequestDto contaRequestDto);
-    ContaResponseDto AtualizarConta(Guid clienteId, ContaRequestDto contaRequestDto, Guid id);
-    bool ExcluirConta(Guid id);
-    ContaResponseDto ConsultarConta(Guid id);
-    IEnumerable<ContaResponseDto> ListarContas(Guid clienteId);
+    Task<ContaResponseDto> CadastrarConta(ContaRequestDto contaRequestDto, Guid clienteId);
+    Task<ContaResponseDto> AtualizarConta(Guid clienteId, ContaRequestDto contaRequestDto, Guid id);
+    Task<bool> ExcluirConta(Guid id);
+    Task<ContaResponseDto> ConsultarConta(Guid id);
+    Task<IEnumerable<ContaResponseDto>> ListarContas(Guid clienteId);
 }

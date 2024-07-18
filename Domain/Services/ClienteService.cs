@@ -2,8 +2,6 @@ using AutoMapper;
 using Crosscutting.Dto;
 using Domain.Entities;
 using Domain.Interfaces;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Domain.Services;
 

@@ -21,53 +21,59 @@ public class ContaController : ControllerBase
     }
 
     [HttpPost("cadastrar")]
-    public IActionResult CadastrarConta([FromBody] ContaRequestDto contaRequestDto)
+    public async Task<IActionResult> CadastrarConta([FromBody] ContaRequestDto contaRequestDto)
     {
         if (!_contaValidator.EhValido(contaRequestDto, out var errors))
         {
             return BadRequest(errors);
         }
 
-        var cliente = _clienteService.ConsultarCliente(contaRequestDto.ClienteId);
+        var cliente = await _clienteService.ConsultarCliente(contaRequestDto.ClienteId);
         if (cliente == null)
         {
             return NotFound($"Cliente com ID {contaRequestDto.ClienteId} não encontrado.");
         }
-
-        var contaCadastrada = _contaService.CadastrarConta(contaRequestDto.ClienteId, contaRequestDto);
+        
+        var contaCadastrada = await _contaService.CadastrarConta(contaRequestDto, contaRequestDto.ClienteId);
         return CreatedAtAction(nameof(ConsultarConta), new { id = contaCadastrada.Id }, contaCadastrada);
     }
 
     [HttpPut("atualizar/{id:guid}")]
-    public IActionResult AtualizarConta(Guid id, [FromBody] ContaRequestDto contaRequestDto)
+    public async Task<IActionResult> AtualizarConta(Guid id, [FromBody] ContaRequestDto contaRequestDto)
     {
+        var cliente = await _clienteService.ConsultarCliente(contaRequestDto.ClienteId);
+        if (cliente == null)
+        {
+            return NotFound($"Cliente com ID {contaRequestDto.ClienteId} não encontrado.");
+        }
+        
         if (!_contaValidator.EhValido(contaRequestDto, out var errors))
         {
             return BadRequest(errors);
         }
-
-        var contaAtualizada = _contaService.AtualizarConta(contaRequestDto.ClienteId, contaRequestDto, id);
+        
+        var contaAtualizada = await _contaService.AtualizarConta(contaRequestDto.ClienteId, contaRequestDto, id);
         return contaAtualizada == null ? NotFound() : Ok(contaAtualizada);
     }
 
     [HttpDelete("excluir/{id:guid}")]
-    public IActionResult ExcluirConta(Guid id)
+    public async Task<IActionResult> ExcluirConta(Guid id)
     {
-        var contaExcluida = _contaService.ExcluirConta(id);
+        var contaExcluida = await _contaService.ExcluirConta(id);
         return contaExcluida ? NoContent() : NotFound();
     }
 
     [HttpGet("consultar/{id:guid}")]
-    public IActionResult ConsultarConta(Guid id)
+    public async Task<IActionResult> ConsultarConta(Guid id)
     {
-        var conta = _contaService.ConsultarConta(id);
+        var conta = await _contaService.ConsultarConta(id);
         return conta == null ? NotFound() : Ok(conta);
     }
 
     [HttpGet("listar/{clienteId:guid}")]
-    public IActionResult ListarContas(Guid clienteId)
+    public async Task<IActionResult> ListarContas(Guid clienteId)
     {
-        var contas = _contaService.ListarContas(clienteId);
+        var contas = await _contaService.ListarContas(clienteId);
         return Ok(contas);
     }
 }

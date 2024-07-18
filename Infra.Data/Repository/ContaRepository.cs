@@ -1,41 +1,54 @@
 using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Infra.Data.Repository;
 
-public class ContaRepository(AppDbContext context) : IContaRepository
+public class ContaRepository : IContaRepository
 {
-    public Conta CadastrarConta(Guid clienteId, Conta conta)
+    private readonly AppDbContext _context;
+
+    public ContaRepository(AppDbContext context)
+    {
+        _context = context;
+    }
+
+    public async Task<Conta> CadastrarConta(Guid clienteId, Conta conta)
     {
         conta.ClienteId = clienteId;
-        context.Contas.Add(conta);
-        context.SaveChanges();
+        await _context.Contas.AddAsync(conta);
+        await _context.SaveChangesAsync();
         return conta;
     }
 
-    public Conta AtualizarConta(Guid clienteId, Conta conta)
+    public async Task<Conta> AtualizarConta(Guid clienteId, Conta conta)
     {
-        context.Contas.Update(conta);
-        context.SaveChanges();
+        conta.ClienteId = clienteId;
+        _context.Contas.Update(conta);
+        await _context.SaveChangesAsync();
         return conta;
     }
 
-    public bool ExcluirConta(Guid id)
+    public async Task<bool> ExcluirConta(Guid id)
     {
-        var conta = context.Contas.Find(id);
+        var conta = await _context.Contas.FindAsync(id);
         if (conta is null) return false;
-        context.Contas.Remove(conta);
-        context.SaveChanges();
+        _context.Contas.Remove(conta);
+        await _context.SaveChangesAsync();
         return true;
     }
 
-    public Conta ConsultarConta(Guid id)
+    public async Task<Conta> ConsultarConta(Guid id)
     {
-        return context.Contas.FirstOrDefault(c => c.Id == id);
+        return await _context.Contas.FirstOrDefaultAsync(c => c.Id == id);
     }
 
-    public IEnumerable<Conta> ListarContas(Guid clienteId)
+    public async Task<IEnumerable<Conta>> ListarContas(Guid clienteId)
     {
-        return context.Contas.Where(c => c.ClienteId == clienteId).ToList();
+        return await _context.Contas.Where(c => c.ClienteId == clienteId).ToListAsync();
     }
 }
