@@ -11,40 +11,54 @@ public class ClienteController : ControllerBase
     private readonly IClienteService _clienteService;
     private readonly IClienteValidator _clienteValidator;
 
-    public ClienteController(IClienteService clienteService)
+    public ClienteController(IClienteService clienteService, IClienteValidator clienteValidator)
     {
         _clienteService = clienteService;
+        _clienteValidator = clienteValidator;
     }
 
     [HttpPost("cadastrar")]
-    //usar _clienteValidator.EhValido()
-    
+    public async Task<IActionResult> CadastrarCliente([FromBody] ClienteRequestDto clienteRequestDto)
+    {
+        if (!_clienteValidator.EhValido(clienteRequestDto, out var errors))
+        {
+            return BadRequest(errors);
+        }
+
+        var clienteCadastrado = await _clienteService.CadastrarCliente(clienteRequestDto);
+        return CreatedAtAction(nameof(ConsultarCliente), new { id = clienteCadastrado.Id }, clienteCadastrado);
+    }
 
     [HttpPut("atualizar/{id:guid}")]
-    public IActionResult AtualizarCliente(Guid id, [FromBody] ClienteRequestDto clienteRequestDto)
+    public async Task<IActionResult> AtualizarCliente(Guid id, [FromBody] ClienteRequestDto clienteRequestDto)
     {
-        var clienteAtualizado = _clienteService.AtualizarCliente(id, clienteRequestDto);
+        if (!_clienteValidator.EhValido(clienteRequestDto, out var errors))
+        {
+            return BadRequest(errors);
+        }
+
+        var clienteAtualizado = await _clienteService.AtualizarCliente(id, clienteRequestDto);
         return clienteAtualizado == null ? NotFound() : Ok(clienteAtualizado);
     }
 
     [HttpDelete("excluir/{id:guid}")]
-    public IActionResult ExcluirCliente(Guid id)
+    public async Task<IActionResult> ExcluirCliente(Guid id)
     {
-        var clienteExcluido = _clienteService.ExcluirCliente(id);
+        var clienteExcluido = await _clienteService.ExcluirCliente(id);
         return clienteExcluido ? NoContent() : NotFound();
     }
 
     [HttpGet("consultar/{id:guid}")]
-    public IActionResult ConsultarCliente(Guid id)
+    public async Task<IActionResult> ConsultarCliente(Guid id)
     {
-        var cliente = _clienteService.ConsultarCliente(id);
+        var cliente = await _clienteService.ConsultarCliente(id);
         return cliente == null ? NotFound() : Ok(cliente);
     }
 
     [HttpGet("listar")]
-    public IActionResult ListarClientes()
+    public async Task<IActionResult> ListarClientes()
     {
-        var clientes = _clienteService.ListarClientes();
+        var clientes = await _clienteService.ListarClientes();
         return Ok(clientes);
     }
 }

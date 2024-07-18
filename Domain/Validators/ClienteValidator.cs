@@ -1,11 +1,10 @@
 using Crosscutting.Dto;
-using Crosscutting.Exceptions;
 using Domain.Interfaces;
 using FluentValidation;
 
-namespace Crosscutting.Validators;
+namespace Domain.Validators;
 
-public class ClienteValidator : IClienteValidator
+public class ClienteValidator : AbstractValidator<ClienteRequestDto>, IClienteValidator
 {
     public ClienteValidator()
     {
@@ -25,5 +24,12 @@ public class ClienteValidator : IClienteValidator
         RuleFor(cliente => cliente.EstadoCivil)
             .IsInEnum()
             .WithMessage("Estado civil inválido.");
+    }
+    
+    public bool EhValido(ClienteRequestDto clienteRequestDto, out IList<string> errors)
+    {
+        var result = Validate(clienteRequestDto);
+        errors = result.Errors.Select(e => e.ErrorMessage).ToList();
+        return result.IsValid;
     }
 }

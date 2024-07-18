@@ -1,6 +1,5 @@
 using AutoMapper;
 using Crosscutting.Dto;
-using Crosscutting.Validators;
 using Domain.Entities;
 using Domain.Interfaces;
 
@@ -10,45 +9,42 @@ public class ClienteService : IClienteService
 {
     private readonly IClienteRepository _clienteRepository;
     private readonly IMapper _mapper;
-    private readonly ClienteValidator _clienteValidator;
-    
-    public ClienteService(IClienteRepository clienteRepository, IMapper mapper, ClienteValidator clienteValidator)
+
+    public ClienteService(IClienteRepository clienteRepository, IMapper mapper)
     {
         _clienteRepository = clienteRepository;
         _mapper = mapper;
-        _clienteValidator = clienteValidator;
     }
-    
-    public ClienteResponseDto CadastrarCliente(ClienteRequestDto clienteRequestDto)
+
+    public async Task<ClienteResponseDto> CadastrarCliente(ClienteRequestDto clienteRequestDto)
     {
         var cliente = _mapper.Map<Cliente>(clienteRequestDto);
-        _clienteValidator.ValidarCliente(clienteRequestDto);
-        var clienteCadastrado = _clienteRepository.CadastrarCliente(cliente);
+        var clienteCadastrado = await _clienteRepository.CadastrarCliente(cliente);
         return _mapper.Map<ClienteResponseDto>(clienteCadastrado);
     }
 
-    public ClienteResponseDto AtualizarCliente(Guid id, ClienteRequestDto clienteRequestDto)
+    public async Task<ClienteResponseDto> AtualizarCliente(Guid id, ClienteRequestDto clienteRequestDto)
     {
         var cliente = _mapper.Map<Cliente>(clienteRequestDto);
         cliente.Id = id;
-        var clienteAtualizado = _clienteRepository.AtualizarCliente(cliente);
+        var clienteAtualizado = await _clienteRepository.AtualizarCliente(cliente);
         return _mapper.Map<ClienteResponseDto>(clienteAtualizado);
     }
 
-    public bool ExcluirCliente(Guid id)
+    public async Task<bool> ExcluirCliente(Guid id)
     {
-        return _clienteRepository.ExcluirCliente(id);
+        return await _clienteRepository.ExcluirCliente(id);
     }
 
-    public ClienteResponseDto ConsultarCliente(Guid id)
+    public async Task<ClienteResponseDto> ConsultarCliente(Guid id)
     {
-        var cliente = _clienteRepository.ConsultarCliente(id);
+        var cliente = await _clienteRepository.ConsultarCliente(id);
         return _mapper.Map<ClienteResponseDto>(cliente);
     }
 
-    public IEnumerable<ClienteResponseDto> ListarClientes()
+    public async Task<IEnumerable<ClienteResponseDto>> ListarClientes()
     {
-        var clientes = _clienteRepository.ListarClientes();
+        var clientes = await _clienteRepository.ListarClientes();
         return _mapper.Map<IEnumerable<ClienteResponseDto>>(clientes);
     }
 }

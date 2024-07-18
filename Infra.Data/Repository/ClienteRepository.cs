@@ -1,40 +1,49 @@
 using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
-namespace Infra.Data.Repository;
-
-public class ClienteRepository(AppDbContext context) : IClienteRepository
+namespace Infra.Data.Repository
 {
-    public async Task<Cliente> CadastrarCliente(Cliente cliente)
+    public class ClienteRepository : IClienteRepository
     {
-        await context.Clientes.AddAsync(cliente);
-        await context.SaveChangesAsync();
-        return cliente;
-    }
+        private readonly AppDbContext _context;
 
-    public Cliente AtualizarCliente(Cliente cliente)
-    {
-        context.Clientes.Update(cliente);
-        context.SaveChanges();
-        return cliente;
-    }
+        public ClienteRepository(AppDbContext context)
+        {
+            _context = context;
+        }
 
-    public bool ExcluirCliente(Guid id)
-    {
-        var cliente = context.Clientes.Find(id);
-        if (cliente is null) return false;
-        context.Clientes.Remove(cliente);
-        context.SaveChanges();
-        return true;
-    }
+        public async Task<Cliente> CadastrarCliente(Cliente cliente)
+        {
+            await _context.Clientes.AddAsync(cliente);
+            await _context.SaveChangesAsync();
+            return cliente;
+        }
 
-    public Cliente ConsultarCliente(Guid id)
-    {
-        return context.Clientes.FirstOrDefault(c => c.Id == id);
-    }
+        public async Task<Cliente> AtualizarCliente(Cliente cliente)
+        {
+            _context.Clientes.Update(cliente);
+            await _context.SaveChangesAsync();
+            return cliente;
+        }
 
-    public IEnumerable<Cliente> ListarClientes()
-    {
-        return context.Clientes.ToList();
+        public async Task<bool> ExcluirCliente(Guid id)
+        {
+            var cliente = await _context.Clientes.FindAsync(id);
+            if (cliente == null) return false;
+            _context.Clientes.Remove(cliente);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<Cliente> ConsultarCliente(Guid id)
+        {
+            return await _context.Clientes.FirstOrDefaultAsync(c => c.Id == id);
+        }
+
+        public async Task<IEnumerable<Cliente>> ListarClientes()
+        {
+            return await _context.Clientes.ToListAsync();
+        }
     }
 }
