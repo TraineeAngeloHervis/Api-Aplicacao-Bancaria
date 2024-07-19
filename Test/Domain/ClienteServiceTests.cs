@@ -71,10 +71,6 @@ public class ClienteServiceTests
         };
         var clienteResponseDto = ClienteResponseDtoBuilder.Novo()
             .ComId(id)
-            .ComNome(clienteRequestDto.Nome)
-            .ComCpf(clienteRequestDto.Cpf)
-            .ComDataNascimento(clienteRequestDto.DataNascimento)
-            .ComEstadoCivil(clienteRequestDto.EstadoCivil)
             .Build();
 
         _mapper.Setup(x => x.Map<Cliente>(clienteRequestDto)).Returns(cliente);

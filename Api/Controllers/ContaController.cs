@@ -21,59 +21,103 @@ public class ContaController : ControllerBase
     }
 
     [HttpPost("cadastrar")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CadastrarConta([FromBody] ContaRequestDto contaRequestDto)
     {
-        if (!_contaValidator.EhValido(contaRequestDto, out var errors))
+        if (!_contaValidator.EhValido(contaRequestDto, out var errors)) return BadRequest(errors);
+        try
         {
-            return BadRequest(errors);
-        }
+            var cliente = await _clienteService.ConsultarCliente(contaRequestDto.ClienteId);
+            if (cliente == null) return NotFound($"Cliente com ID {contaRequestDto.ClienteId} não encontrado.");
 
-        var cliente = await _clienteService.ConsultarCliente(contaRequestDto.ClienteId);
-        if (cliente == null)
-        {
-            return NotFound($"Cliente com ID {contaRequestDto.ClienteId} não encontrado.");
+            var contaCadastrada = await _contaService
+                .CadastrarConta(contaRequestDto, contaRequestDto.ClienteId);
+
+            return CreatedAtAction(nameof(ConsultarConta), new { id = contaCadastrada.Id }, contaCadastrada);
         }
-        
-        var contaCadastrada = await _contaService.CadastrarConta(contaRequestDto, contaRequestDto.ClienteId);
-        return CreatedAtAction(nameof(ConsultarConta), new { id = contaCadastrada.Id }, contaCadastrada);
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpPut("atualizar/{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AtualizarConta(Guid id, [FromBody] ContaRequestDto contaRequestDto)
     {
-        var cliente = await _clienteService.ConsultarCliente(contaRequestDto.ClienteId);
-        if (cliente == null)
+        if (!_contaValidator.EhValido(contaRequestDto, out var errors)) return BadRequest(errors);
+        try
         {
-            return NotFound($"Cliente com ID {contaRequestDto.ClienteId} não encontrado.");
+            var cliente = await _clienteService.ConsultarCliente(contaRequestDto.ClienteId);
+            if (cliente == null) return NotFound($"Cliente com ID {contaRequestDto.ClienteId} não encontrado.");
+
+            var contaAtualizada = await _contaService
+                .AtualizarConta(contaRequestDto.ClienteId, contaRequestDto, id);
+
+            return Ok(contaAtualizada);
         }
-        
-        if (!_contaValidator.EhValido(contaRequestDto, out var errors))
+        catch (Exception ex)
         {
-            return BadRequest(errors);
+            return BadRequest(ex.Message);
         }
-        
-        var contaAtualizada = await _contaService.AtualizarConta(contaRequestDto.ClienteId, contaRequestDto, id);
-        return contaAtualizada == null ? NotFound() : Ok(contaAtualizada);
     }
 
     [HttpDelete("excluir/{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ExcluirConta(Guid id)
     {
-        var contaExcluida = await _contaService.ExcluirConta(id);
-        return contaExcluida ? NoContent() : NotFound();
+        try
+        {
+            var conta = await _contaService.ConsultarConta(id);
+            if (conta == null) return NotFound();
+
+            var contaExcluida = await _contaService.ExcluirConta(id);
+            return contaExcluida ? NoContent() : StatusCode(500);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet("consultar/{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ConsultarConta(Guid id)
     {
-        var conta = await _contaService.ConsultarConta(id);
-        return conta == null ? NotFound() : Ok(conta);
+        try
+        {
+            var conta = await _contaService.ConsultarConta(id);
+            return conta == null ? NotFound() : Ok(conta);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet("listar/{clienteId:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> ListarContas(Guid clienteId)
     {
-        var contas = await _contaService.ListarContas(clienteId);
-        return Ok(contas);
+        try
+        {
+            var contas = await _contaService.ListarContas(clienteId);
+            return Ok(contas);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 }
