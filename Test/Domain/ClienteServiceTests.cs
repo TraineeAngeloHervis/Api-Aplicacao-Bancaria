@@ -27,29 +27,17 @@ public class ClienteServiceTests
     {
         // Arrange
         var clienteRequestDto = ClienteRequestDtoBuilder.Novo().Build();
-        var cliente = new Cliente
-        {
-            Nome = clienteRequestDto.Nome,
-            Cpf = clienteRequestDto.Cpf,
-            DataNascimento = clienteRequestDto.DataNascimento,
-            EstadoCivil = clienteRequestDto.EstadoCivil
-        };
-        var clienteResponseDto = ClienteResponseDtoBuilder.Novo()
-            .ComNome(clienteRequestDto.Nome)
-            .ComCpf(clienteRequestDto.Cpf)
-            .ComDataNascimento(clienteRequestDto.DataNascimento)
-            .ComEstadoCivil(clienteRequestDto.EstadoCivil)
-            .Build();
-
+        var cliente = ClienteBuilder.Novo().Build();
+        var clienteResponseDto = ClienteResponseDtoBuilder.Novo().ComClienteRequest(clienteRequestDto).Build();
         _mapper.Setup(x => x.Map<Cliente>(clienteRequestDto)).Returns(cliente);
         _clienteRepository.Setup(x => x.CadastrarCliente(cliente)).ReturnsAsync(cliente);
         _mapper.Setup(x => x.Map<ClienteResponseDto>(cliente)).Returns(clienteResponseDto);
 
         // Act
-        var resultado = await _clienteService.CadastrarCliente(clienteRequestDto);
+        var resultadoEsperado = await _clienteService.CadastrarCliente(clienteRequestDto);
 
         // Assert
-        resultado.Should().BeEquivalentTo(clienteResponseDto);
+        resultadoEsperado.Should().BeEquivalentTo(clienteResponseDto);
         _mapper.Verify(x => x.Map<Cliente>(clienteRequestDto), Times.Once);
         _clienteRepository.Verify(x => x.CadastrarCliente(cliente), Times.Once);
         _mapper.Verify(x => x.Map<ClienteResponseDto>(cliente), Times.Once);
@@ -59,33 +47,19 @@ public class ClienteServiceTests
     public async Task Cliente_QuandoAtualizarCliente_DeveRetornarClienteAtualizado()
     {
         // Arrange
-        var id = Guid.NewGuid();
         var clienteRequestDto = ClienteRequestDtoBuilder.Novo().Build();
-        var cliente = new Cliente
-        {
-            Id = id,
-            Nome = clienteRequestDto.Nome,
-            Cpf = clienteRequestDto.Cpf,
-            DataNascimento = clienteRequestDto.DataNascimento,
-            EstadoCivil = clienteRequestDto.EstadoCivil
-        };
-        var clienteResponseDto = ClienteResponseDtoBuilder.Novo()
-            .ComId(id)
-            .ComNome(clienteRequestDto.Nome)
-            .ComCpf(clienteRequestDto.Cpf)
-            .ComDataNascimento(clienteRequestDto.DataNascimento)
-            .ComEstadoCivil(clienteRequestDto.EstadoCivil)
-            .Build();
+        var cliente = ClienteBuilder.Novo().Build();
+        var clienteResponseDto = ClienteResponseDtoBuilder.Novo().ComClienteRequest(clienteRequestDto).Build();
 
         _mapper.Setup(x => x.Map<Cliente>(clienteRequestDto)).Returns(cliente);
         _clienteRepository.Setup(x => x.AtualizarCliente(cliente)).ReturnsAsync(cliente);
         _mapper.Setup(x => x.Map<ClienteResponseDto>(cliente)).Returns(clienteResponseDto);
 
         // Act
-        var resultado = await _clienteService.AtualizarCliente(id, clienteRequestDto);
+        var resultadoEsperado = await _clienteService.AtualizarCliente(clienteRequestDto);
 
         // Assert
-        resultado.Should().BeEquivalentTo(clienteResponseDto);
+        resultadoEsperado.Should().BeEquivalentTo(clienteResponseDto);
         _mapper.Verify(x => x.Map<Cliente>(clienteRequestDto), Times.Once);
         _clienteRepository.Verify(x => x.AtualizarCliente(cliente), Times.Once);
         _mapper.Verify(x => x.Map<ClienteResponseDto>(cliente), Times.Once);
@@ -95,32 +69,33 @@ public class ClienteServiceTests
     public async Task Cliente_QuandoExcluirCliente_DeveRetornarTrue()
     {
         // Arrange
-        var id = Guid.NewGuid();
-        _clienteRepository.Setup(x => x.ExcluirCliente(id)).ReturnsAsync(true);
-
+        var cliente = ClienteBuilder.Novo().Build();
+        _clienteRepository.Setup(x => x.ConsultarCliente(It.IsAny<Guid>())).ReturnsAsync(cliente);
+        _clienteRepository.Setup(x => x.ExcluirCliente(It.IsAny<Guid>())).ReturnsAsync(true);
+        
         // Act
-        var resultado = await _clienteService.ExcluirCliente(id);
-
+        var resultadoEsperado = await _clienteService.ExcluirCliente(It.IsAny<Guid>());
+        
         // Assert
-        resultado.Should().BeTrue();
-        _clienteRepository.Verify(x => x.ExcluirCliente(id), Times.Once);
+        resultadoEsperado.Should().BeTrue();
+        _clienteRepository.Verify(x => x.ConsultarCliente(It.IsAny<Guid>()), Times.Once);
+        _clienteRepository.Verify(x => x.ExcluirCliente(It.IsAny<Guid>()), Times.Once);
     }
     
     [Fact]
     public async Task Cliente_QuandoConsultarCliente_DeveRetornarCliente()
     {
         // Arrange
-        var id = Guid.NewGuid();
         var cliente = ClienteResponseDtoBuilder.Novo().Build();
-        _clienteRepository.Setup(x => x.ConsultarCliente(id)).ReturnsAsync(new Cliente());
+        _clienteRepository.Setup(x => x.ConsultarCliente(cliente.Id)).ReturnsAsync(new Cliente());
         _mapper.Setup(x => x.Map<ClienteResponseDto>(It.IsAny<Cliente>())).Returns(cliente);
         
         // Act
-        var resultado = await _clienteService.ConsultarCliente(id);
+        var resultadoEsperado = await _clienteService.ConsultarCliente(cliente.Id);
         
         // Assert
-        resultado.Should().BeEquivalentTo(cliente);
-        _clienteRepository.Verify(x => x.ConsultarCliente(id), Times.Once);
+        resultadoEsperado.Should().BeEquivalentTo(cliente);
+        _clienteRepository.Verify(x => x.ConsultarCliente(cliente.Id), Times.Once);
         _mapper.Verify(x => x.Map<ClienteResponseDto>(It.IsAny<Cliente>()), Times.Once);
     }
     
@@ -138,10 +113,10 @@ public class ClienteServiceTests
         _mapper.Setup(x => x.Map<IEnumerable<ClienteResponseDto>>(It.IsAny<IEnumerable<Cliente>>())).Returns(clientes);
         
         // Act
-        var resultado = await _clienteService.ListarClientes();
+        var resultadoEsperado = await _clienteService.ListarClientes();
         
         // Assert
-        resultado.Should().BeEquivalentTo(clientes);
+        resultadoEsperado.Should().BeEquivalentTo(clientes);
         _clienteRepository.Verify(x => x.ListarClientes(), Times.Once);
         _mapper.Verify(x => x.Map<IEnumerable<ClienteResponseDto>>(It.IsAny<IEnumerable<Cliente>>()), Times.Once);
     }

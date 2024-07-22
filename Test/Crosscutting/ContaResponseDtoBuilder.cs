@@ -20,6 +20,25 @@ public class ContaResponseDtoBuilder
     
     public static ContaResponseDtoBuilder Novo()
         => new();
+    
+    public ContaResponseDtoBuilder ComContaRequest (ContaRequestDto contaRequestDto)
+    {
+        _faker.RuleFor(x => x.ClienteId, f => contaRequestDto.ClienteId);
+        _faker.RuleFor(x => x.SaldoInicial, f => contaRequestDto.SaldoInicial);
+        _faker.RuleFor(x => x.TipoConta, f => contaRequestDto.TipoConta);
+        _faker.RuleFor(x => x.DataAbertura, f => contaRequestDto.DataAbertura);
+        return this;
+    }
+    
+    public ContaResponseDtoBuilder ComContaResponse (ContaResponseDto contaResponseDto)
+    {
+        _faker.RuleFor(x => x.Id, f => contaResponseDto.Id);
+        _faker.RuleFor(x => x.ClienteId, f => contaResponseDto.ClienteId);
+        _faker.RuleFor(x => x.SaldoInicial, f => contaResponseDto.SaldoInicial);
+        _faker.RuleFor(x => x.TipoConta, f => contaResponseDto.TipoConta);
+        _faker.RuleFor(x => x.DataAbertura, f => contaResponseDto.DataAbertura);
+        return this;
+    }
 
     public ContaResponseDtoBuilder ComId(Guid id)
     {

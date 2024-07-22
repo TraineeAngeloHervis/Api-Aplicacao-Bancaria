@@ -18,27 +18,33 @@ public class ClienteService : IClienteService
 
     public async Task<ClienteResponseDto> CadastrarCliente(ClienteRequestDto clienteRequestDto)
     {
+        ArgumentNullException.ThrowIfNull(clienteRequestDto);
+
         var cliente = _mapper.Map<Cliente>(clienteRequestDto);
         var clienteCadastrado = await _clienteRepository.CadastrarCliente(cliente);
         return _mapper.Map<ClienteResponseDto>(clienteCadastrado);
     }
 
-    public async Task<ClienteResponseDto> AtualizarCliente(Guid id, ClienteRequestDto clienteRequestDto)
+    public async Task<ClienteResponseDto> AtualizarCliente(ClienteRequestDto clienteRequestDto)
     {
+        ArgumentNullException.ThrowIfNull(clienteRequestDto);
+
         var cliente = _mapper.Map<Cliente>(clienteRequestDto);
-        cliente.Id = id;
         var clienteAtualizado = await _clienteRepository.AtualizarCliente(cliente);
         return _mapper.Map<ClienteResponseDto>(clienteAtualizado);
     }
 
     public async Task<bool> ExcluirCliente(Guid id)
     {
+        var cliente = await _clienteRepository.ConsultarCliente(id);
+        ArgumentNullException.ThrowIfNull(cliente);
         return await _clienteRepository.ExcluirCliente(id);
     }
 
     public async Task<ClienteResponseDto> ConsultarCliente(Guid id)
     {
         var cliente = await _clienteRepository.ConsultarCliente(id);
+        ArgumentNullException.ThrowIfNull(cliente);
         return _mapper.Map<ClienteResponseDto>(cliente);
     }
 

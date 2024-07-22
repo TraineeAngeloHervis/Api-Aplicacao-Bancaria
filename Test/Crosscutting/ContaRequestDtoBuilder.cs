@@ -19,6 +19,15 @@ public class ContaRequestDtoBuilder
     
     public static ContaRequestDtoBuilder Novo()
         => new();
+    
+    public ContaRequestDtoBuilder ComContaRequest (ContaRequestDto contaRequestDto)
+    {
+        _faker.RuleFor(x => x.ClienteId, f => contaRequestDto.ClienteId);
+        _faker.RuleFor(x => x.SaldoInicial, f => contaRequestDto.SaldoInicial);
+        _faker.RuleFor(x => x.TipoConta, f => contaRequestDto.TipoConta);
+        _faker.RuleFor(x => x.DataAbertura, f => contaRequestDto.DataAbertura);
+        return this;
+    }
 
     public ContaRequestDtoBuilder ComClienteId(Guid clienteId)
     {

@@ -1,5 +1,4 @@
 using Api.Controllers;
-using Bogus;
 using Crosscutting.Dto;
 using Domain.Interfaces;
 using Domain.Validators;
@@ -13,15 +12,15 @@ namespace Test.Api;
 public class ContaControllerTests
 {
     private readonly Mock<IContaService> _contaService;
+    private readonly Mock<IClienteService> _clienteService;
     private readonly Mock<IContaValidator> _contaValidator;
     private readonly ContaController _contaController;
-    private readonly Mock<IClienteService> _clienteService;
 
     public ContaControllerTests()
     {
         _contaService = new Mock<IContaService>();
-        _contaValidator = new Mock<IContaValidator>();
         _clienteService = new Mock<IClienteService>();
+        _contaValidator = new Mock<IContaValidator>();
         _contaController = new ContaController(_contaService.Object, _clienteService.Object, new ContaValidator());
     }
 
@@ -52,7 +51,7 @@ public class ContaControllerTests
         var createdAtActionResult = (CreatedAtActionResult)resultadoEsperado;
         createdAtActionResult.Value.Should().Be(contaResponseDto);
     }
-    
+
     [Fact]
     public async Task Conta_QuandoAtualizarConta_DeveRetornarContaAtualizada()
     {
@@ -64,34 +63,39 @@ public class ContaControllerTests
                 .IsAny<ContaRequestDto>(), out It.Ref<IList<string>>.IsAny))
             .Returns(true);
 
+        _clienteService.Setup(x => x.ConsultarCliente(It
+                .IsAny<Guid>()))
+            .ReturnsAsync(ClienteResponseDtoBuilder.Novo().Build());
+        
         _contaService.Setup(x => x.AtualizarConta(It
-                .IsAny<Guid>(), It.IsAny<ContaRequestDto>(), It.IsAny<Guid>()))
+                .IsAny<Guid>(), It.IsAny<ContaRequestDto>()))
             .ReturnsAsync(contaResponseDto);
 
         // Act
-        var resultadoEsperado = await _contaController.AtualizarConta(Guid.NewGuid(), contaRequestDto);
+        var resultadoEsperado = await _contaController.AtualizarConta(contaRequestDto);
 
         // Assert
         resultadoEsperado.Should().BeOfType<OkObjectResult>();
         var okObjectResult = (OkObjectResult)resultadoEsperado;
         okObjectResult.Value.Should().Be(contaResponseDto);
     }
-    
+
     [Fact]
-    public async Task Conta_QuandoExcluirConta_DeveRetornarNoContent()
+    public async Task Conta_QuandoExcluirConta_DeveRetornarNotFound()
     {
         // Arrange
+        var contaResponseDto = ContaResponseDtoBuilder.Novo().Build();
         _contaService.Setup(x => x.ExcluirConta(It
                 .IsAny<Guid>()))
             .ReturnsAsync(true);
 
         // Act
-        var resultadoEsperado = await _contaController.ExcluirConta(Guid.NewGuid());
+        var resultadoEsperado = await _contaController.ExcluirConta(contaResponseDto.Id);
 
         // Assert
-        resultadoEsperado.Should().BeOfType<NoContentResult>();
+        resultadoEsperado.Should().BeOfType<NotFoundResult>();
     }
-    
+
     [Fact]
     public async Task Conta_QuandoConsultarConta_DeveRetornarConta()
     {
@@ -102,9 +106,36 @@ public class ContaControllerTests
             .ReturnsAsync(contaResponseDto);
 
         // Act
-        var resultadoEsperado = await _contaController.ConsultarConta(Guid.NewGuid());
+        var resultadoEsperado = await _contaController.ConsultarConta(contaResponseDto.Id);
 
         // Assert
         resultadoEsperado.Should().BeOfType<OkObjectResult>();
+    }
+    
+    [Fact]
+    public async Task Conta_QuandoListarContas_DeveRetornarContas()
+    {
+        // Arrange
+        var contasResponseDto = new List<ContaResponseDto>()
+        {
+            ContaResponseDtoBuilder.Novo().Build(),
+            ContaResponseDtoBuilder.Novo().Build(),
+            ContaResponseDtoBuilder.Novo().Build()
+        };
+        
+        _contaService.Setup(x => x.ListarContas(It
+                .IsAny<Guid>()))
+            .ReturnsAsync(contasResponseDto);
+        
+        // Act
+        var resultadoEsperado = await _contaController.ListarContas(It.IsAny<Guid>());
+        var okObjectResult = (OkObjectResult)resultadoEsperado;
+        var contasRetornadas = okObjectResult.Value as List<ContaResponseDto>;
+        
+        // Assert
+        resultadoEsperado.Should().BeOfType<OkObjectResult>();
+        contasRetornadas.Should().NotBeNull();
+        contasRetornadas.Should().HaveCount(3);
+        
     }
 }

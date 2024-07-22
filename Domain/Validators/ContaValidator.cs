@@ -10,19 +10,19 @@ public class ContaValidator : AbstractValidator<ContaRequestDto>, IContaValidato
     {
         RuleFor(conta => conta.ClienteId)
             .NotEmpty()
-            .WithMessage("O campo ClienteId é obrigatório");
+            .WithMessage("O campo ClienteId é obrigatório.");
 
         RuleFor(conta => conta.SaldoInicial)
             .GreaterThanOrEqualTo(0)
-            .WithMessage("O saldo inicial não pode ser negativo");
+            .WithMessage("O saldo inicial não pode ser negativo.");
 
         RuleFor(conta => conta.DataAbertura)
             .LessThanOrEqualTo(DateTime.Now.AddSeconds(1))
-            .WithMessage("A data de abertura não pode ser maior que a data atual");
+            .WithMessage("A data de abertura da conta não pode ser maior que a data atual.");
 
         RuleFor(conta => conta.TipoConta)
             .IsInEnum()
-            .WithMessage("Tipo de conta inválido");
+            .WithMessage("Tipo de conta inválido.");
     }
 
     public bool EhValido(ContaRequestDto contaRequestDto, out IList<string> errors)
