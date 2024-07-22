@@ -26,7 +26,7 @@ public class ContaService : IContaService
         return _mapper.Map<ContaResponseDto>(contaCadastrada);
     }
     
-    public async Task<ContaResponseDto> AtualizarConta(Guid clienteId, ContaRequestDto contaRequestDto, Guid id)
+    public async Task<ContaResponseDto> AtualizarConta(Guid clienteId, ContaRequestDto contaRequestDto)
     {
         ArgumentNullException.ThrowIfNull(contaRequestDto);
         ArgumentNullException.ThrowIfNull(clienteId);

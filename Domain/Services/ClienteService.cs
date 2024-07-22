@@ -25,12 +25,11 @@ public class ClienteService : IClienteService
         return _mapper.Map<ClienteResponseDto>(clienteCadastrado);
     }
 
-    public async Task<ClienteResponseDto> AtualizarCliente(Guid id, ClienteRequestDto clienteRequestDto)
+    public async Task<ClienteResponseDto> AtualizarCliente(ClienteRequestDto clienteRequestDto)
     {
         ArgumentNullException.ThrowIfNull(clienteRequestDto);
 
         var cliente = _mapper.Map<Cliente>(clienteRequestDto);
-        cliente.Id = id;
         var clienteAtualizado = await _clienteRepository.AtualizarCliente(cliente);
         return _mapper.Map<ClienteResponseDto>(clienteAtualizado);
     }

@@ -49,7 +49,7 @@ public class ContaController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> AtualizarConta(Guid id, [FromBody] ContaRequestDto contaRequestDto)
+    public async Task<IActionResult> AtualizarConta([FromBody] ContaRequestDto contaRequestDto)
     {
         if (!_contaValidator.EhValido(contaRequestDto, out var errors)) return BadRequest(errors);
         try
@@ -58,7 +58,7 @@ public class ContaController : ControllerBase
             if (cliente == null) return NotFound($"Cliente com ID {contaRequestDto.ClienteId} não encontrado.");
 
             var contaAtualizada = await _contaService
-                .AtualizarConta(contaRequestDto.ClienteId, contaRequestDto, id);
+                .AtualizarConta(contaRequestDto.ClienteId, contaRequestDto);
 
             return Ok(contaAtualizada);
         }
@@ -80,7 +80,7 @@ public class ContaController : ControllerBase
             if (conta == null) return NotFound();
 
             var contaExcluida = await _contaService.ExcluirConta(id);
-            return contaExcluida ? NoContent() : StatusCode(500);
+            return contaExcluida ? NoContent() : NotFound();
         }
         catch (Exception ex)
         {

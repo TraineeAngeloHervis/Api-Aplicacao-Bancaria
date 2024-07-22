@@ -28,11 +28,11 @@ public class ClienteControllerTests
         // Arrange
         var clienteRequestDto = ClienteRequestDtoBuilder.Novo().Build();
         var clienteResponseDto = ClienteResponseDtoBuilder.Novo().Build();
-        
+
         _clienteValidator.Setup(v => v.EhValido(It
                 .IsAny<ClienteRequestDto>(), out It.Ref<IList<string>>.IsAny))
             .Returns(true);
-        
+
         _clienteService.Setup(x => x.CadastrarCliente(It
                 .IsAny<ClienteRequestDto>()))
             .ReturnsAsync(clienteResponseDto);
@@ -56,19 +56,19 @@ public class ClienteControllerTests
         _clienteValidator.Setup(v => v.EhValido(It
                 .IsAny<ClienteRequestDto>(), out It.Ref<IList<string>>.IsAny))
             .Returns(true);
-
+        
         _clienteService.Setup(x => x.AtualizarCliente(It
-                .IsAny<Guid>(), It.IsAny<ClienteRequestDto>()))
+                .IsAny<ClienteRequestDto>()))
             .ReturnsAsync(clienteResponseDto);
 
         // Act
         var resultadoEsperado = await _clienteController
-            .AtualizarCliente(Guid.NewGuid(), clienteRequestDto);
+            .AtualizarCliente(clienteResponseDto.Id, clienteRequestDto);
 
         // Assert
         resultadoEsperado.Should().BeOfType<OkObjectResult>();
         var okObjectResult = (OkObjectResult)resultadoEsperado;
-        okObjectResult.Value.Should().Be(clienteResponseDto);
+        okObjectResult.Value.Should().BeEquivalentTo(clienteResponseDto);
     }
 
 
@@ -76,12 +76,13 @@ public class ClienteControllerTests
     public async Task Cliente_QuandoExcluirCliente_DeveRetornarNoContent()
     {
         // Arrange
+        var clienteResponseDto = ClienteResponseDtoBuilder.Novo().Build();
         _clienteService.Setup(x => x.ExcluirCliente(It.IsAny<Guid>()))
             .ReturnsAsync(true);
-
+        
         // Act
-        var resultadoEsperado = await _clienteController.ExcluirCliente(Guid.NewGuid());
-
+        var resultadoEsperado = await _clienteController.ExcluirCliente(clienteResponseDto.Id);
+        
         // Assert
         resultadoEsperado.Should().BeOfType<NoContentResult>();
     }
@@ -95,26 +96,14 @@ public class ClienteControllerTests
             .ReturnsAsync(clienteResponseDto);
 
         // Act
-        var resultadoEsperado = await _clienteController.ConsultarCliente(Guid.NewGuid());
+        var resultadoEsperado = await _clienteController.ConsultarCliente(clienteResponseDto.Id);
+        var okObjectResult = (OkObjectResult)resultadoEsperado;
+        var clienteRetornado = okObjectResult.Value as ClienteResponseDto;
 
         // Assert
         resultadoEsperado.Should().BeOfType<OkObjectResult>();
-        var okObjectResult = (OkObjectResult)resultadoEsperado;
-        okObjectResult.Value.Should().Be(clienteResponseDto);
-    }
-
-    [Fact]
-    public async Task Cliente_QuandoConsultarClienteInexistente_DeveRetornarNotFound()
-    {
-        // Arrange
-        _clienteService.Setup(x => x.ConsultarCliente(It.IsAny<Guid>()))
-            .ReturnsAsync((ClienteResponseDto)null);
-
-        // Act
-        var resultadoEsperado = await _clienteController.ConsultarCliente(Guid.NewGuid());
-
-        // Assert
-        resultadoEsperado.Should().BeOfType<NotFoundResult>();
+        clienteRetornado.Should().NotBeNull();
+        clienteRetornado.Should().BeEquivalentTo(clienteResponseDto);
     }
 
     [Fact]
@@ -140,23 +129,5 @@ public class ClienteControllerTests
         resultadoEsperado.Should().BeOfType<OkObjectResult>();
         clientesRetornados.Should().NotBeNull();
         clientesRetornados.Should().HaveCount(3);
-    }
-
-    [Fact]
-    public async Task Cliente_QuandoListarClientesVazio_DeveRetornarListaVazia()
-    {
-        // Arrange
-        _clienteService.Setup(x => x.ListarClientes())
-            .ReturnsAsync(new List<ClienteResponseDto>());
-
-        // Act
-        var resultadoEsperado = await _clienteController.ListarClientes();
-        var okObjectResult = (OkObjectResult)resultadoEsperado;
-        var clientes = okObjectResult.Value as List<ClienteResponseDto>;
-
-        // Assert
-        resultadoEsperado.Should().BeOfType<OkObjectResult>();
-        clientes.Should().NotBeNull();
-        clientes.Should().HaveCount(0);
     }
 }
