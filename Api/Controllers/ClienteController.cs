@@ -48,7 +48,7 @@ public class ClienteController : ControllerBase
 
         try
         {
-            var clienteAtualizado = await _clienteService.AtualizarCliente(clienteRequestDto);
+            var clienteAtualizado = await _clienteService.AtualizarCliente(id, clienteRequestDto);
             return Ok(clienteAtualizado);
         }
         catch (Exception ex)
