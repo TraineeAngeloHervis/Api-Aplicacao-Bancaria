@@ -57,7 +57,7 @@ public class ClienteControllerTests
                 .IsAny<ClienteRequestDto>(), out It.Ref<IList<string>>.IsAny))
             .Returns(true);
         
-        _clienteService.Setup(x => x.AtualizarCliente(It
+        _clienteService.Setup(x => x.AtualizarCliente(It.IsAny<Guid>(), It
                 .IsAny<ClienteRequestDto>()))
             .ReturnsAsync(clienteResponseDto);
 

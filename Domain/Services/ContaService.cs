@@ -26,13 +26,13 @@ public class ContaService : IContaService
         return _mapper.Map<ContaResponseDto>(contaCadastrada);
     }
     
-    public async Task<ContaResponseDto> AtualizarConta(Guid clienteId, ContaRequestDto contaRequestDto)
+    public async Task<ContaResponseDto> AtualizarConta(Guid clienteId, ContaRequestDto contaRequestDto, Guid id)
     {
         ArgumentNullException.ThrowIfNull(contaRequestDto);
         ArgumentNullException.ThrowIfNull(clienteId);
         
         var conta = _mapper.Map<Conta>(contaRequestDto);
-        var contaAtualizada = await _contaRepository.AtualizarConta(clienteId, conta);
+        var contaAtualizada = await _contaRepository.AtualizarConta(clienteId, conta, id);
         return _mapper.Map<ContaResponseDto>(contaAtualizada);
     }
     

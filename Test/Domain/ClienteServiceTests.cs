@@ -56,7 +56,7 @@ public class ClienteServiceTests
         _mapper.Setup(x => x.Map<ClienteResponseDto>(cliente)).Returns(clienteResponseDto);
 
         // Act
-        var resultadoEsperado = await _clienteService.AtualizarCliente(clienteRequestDto);
+        var resultadoEsperado = await _clienteService.AtualizarCliente(It.IsAny<Guid>(), clienteRequestDto);
 
         // Assert
         resultadoEsperado.Should().BeEquivalentTo(clienteResponseDto);
