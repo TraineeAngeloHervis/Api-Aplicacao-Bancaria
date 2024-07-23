@@ -25,9 +25,10 @@ public class ContaRepository : IContaRepository
         return conta;
     }
 
-    public async Task<Conta> AtualizarConta(Guid clienteId, Conta conta)
+    public async Task<Conta> AtualizarConta(Guid clienteId, Conta conta, Guid id)
     {
         conta.ClienteId = clienteId;
+        conta.Id = id;
         _context.Contas.Update(conta);
         await _context.SaveChangesAsync();
         return conta;

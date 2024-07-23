@@ -55,16 +55,16 @@ public class ContaServiceTests
         var contaResponseDto = ContaResponseDtoBuilder.Novo().ComContaRequest(contaRequestDto).Build();
         
         _mapper.Setup(x => x.Map<Conta>(contaRequestDto)).Returns(conta);
-        _contaRepository.Setup(x => x.AtualizarConta(cliente.Id, conta)).ReturnsAsync(conta);
+        _contaRepository.Setup(x => x.AtualizarConta(cliente.Id, conta, conta.Id)).ReturnsAsync(conta);
         _mapper.Setup(x => x.Map<ContaResponseDto>(conta)).Returns(contaResponseDto);
         
         // Act
-        var resultadoEsperado = await _contaService.AtualizarConta(cliente.Id, contaRequestDto);
+        var resultadoEsperado = await _contaService.AtualizarConta(cliente.Id, contaRequestDto, conta.Id);
         
         // Assert
         resultadoEsperado.Should().BeEquivalentTo(contaResponseDto);
         _mapper.Verify(x => x.Map<Conta>(contaRequestDto), Times.Once);
-        _contaRepository.Verify(x => x.AtualizarConta(cliente.Id, conta), Times.Once);
+        _contaRepository.Verify(x => x.AtualizarConta(cliente.Id, conta, conta.Id), Times.Once);
         _mapper.Verify(x => x.Map<ContaResponseDto>(conta), Times.Once);
     }
 

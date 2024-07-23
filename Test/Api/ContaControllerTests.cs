@@ -68,11 +68,11 @@ public class ContaControllerTests
             .ReturnsAsync(ClienteResponseDtoBuilder.Novo().Build());
         
         _contaService.Setup(x => x.AtualizarConta(It
-                .IsAny<Guid>(), It.IsAny<ContaRequestDto>()))
+                .IsAny<Guid>(), It.IsAny<ContaRequestDto>(), It.IsAny<Guid>()))
             .ReturnsAsync(contaResponseDto);
 
         // Act
-        var resultadoEsperado = await _contaController.AtualizarConta(contaRequestDto);
+        var resultadoEsperado = await _contaController.AtualizarConta(contaResponseDto.Id, contaRequestDto);
 
         // Assert
         resultadoEsperado.Should().BeOfType<OkObjectResult>();
