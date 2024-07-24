@@ -1,10 +1,10 @@
-using Infra.Data;
 using Api.Configuration;
 using Domain.Interfaces;
 using Domain.Services;
 using Domain.Validators;
-using Infra.Data.Repository;
 using FluentValidation;
+using Infra.Data;
+using Infra.Data.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
