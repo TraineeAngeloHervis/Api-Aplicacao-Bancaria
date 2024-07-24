@@ -20,7 +20,7 @@ public class ContaMapping : IEntityTypeConfiguration<Conta>
         builder.Property(x => x.ClienteId)
             .IsRequired();
 
-        builder.Property(x => x.SaldoInicial)
+        builder.Property(x => x.Saldo)
             .IsRequired();
 
         builder.Property(x => x.DataAbertura)

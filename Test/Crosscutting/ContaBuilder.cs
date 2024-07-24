@@ -14,7 +14,7 @@ public class ContaBuilder
             .RuleFor(x => x.Id, f => f.Random.Guid())
             .RuleFor(x => x.ClienteId, f => f.Random.Guid())
             .RuleFor(x => x.Cliente, f => ClienteBuilder.Novo().Build())
-            .RuleFor(x => x.SaldoInicial, f => f.Random.Decimal())
+            .RuleFor(x => x.Saldo, f => f.Random.Decimal())
             .RuleFor(x => x.TipoConta, f => f.PickRandom<TipoConta>())
             .RuleFor(x => x.DataAbertura, f => f.Date.Past());
     }
@@ -26,7 +26,7 @@ public class ContaBuilder
     {
         _faker.RuleFor(x => x.Id, f => conta.Id);
         _faker.RuleFor(x => x.ClienteId, f => conta.ClienteId);
-        _faker.RuleFor(x => x.SaldoInicial, f => conta.SaldoInicial);
+        _faker.RuleFor(x => x.Saldo, f => conta.Saldo);
         _faker.RuleFor(x => x.TipoConta, f => conta.TipoConta);
         _faker.RuleFor(x => x.DataAbertura, f => conta.DataAbertura);
         return this;

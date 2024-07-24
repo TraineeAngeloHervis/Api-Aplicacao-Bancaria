@@ -1,3 +1,4 @@
+using Crosscutting.Enums;
 using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;

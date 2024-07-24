@@ -9,11 +9,13 @@ public class AppDbContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         var serverVersion = new MySqlServerVersion(new Version(8, 0, 25));
-        optionsBuilder.UseMySql("Server=localhost;Database=aplicacao_bancaria;Uid=root;Pwd=BancoApi007;", serverVersion);
+        optionsBuilder.UseMySql("Server=localhost;Database=aplicacao_bancaria;Uid=root;Pwd=BancoApi007;",
+            serverVersion);
     }
 
     public DbSet<Cliente> Clientes { get; set; }
     public DbSet<Conta> Contas { get; set; }
+    public DbSet<Transacao> Transacoes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,6 +23,7 @@ public class AppDbContext : DbContext
 
         modelBuilder
             .ApplyConfiguration(new ClienteMapping())
-            .ApplyConfiguration(new ContaMapping());
+            .ApplyConfiguration(new ContaMapping())
+            .ApplyConfiguration(new TransacaoMapping());
     }
 }

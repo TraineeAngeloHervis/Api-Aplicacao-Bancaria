@@ -13,5 +13,8 @@ public class MappingProfile : Profile
 
         CreateMap<ContaRequestDto, Conta>();
         CreateMap<Conta, ContaResponseDto>();
+        
+        CreateMap<TransacaoRequestDto, Transacao>();
+        CreateMap<Transacao, TransacaoResponseDto>();
     }
 }

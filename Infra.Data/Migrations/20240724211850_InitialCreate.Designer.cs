@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infra.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240710150948_AlteracoesMapeamento")]
-    partial class AlteracoesMapeamento
+    [Migration("20240724211850_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
@@ -65,7 +65,7 @@ namespace Infra.Data.Migrations
                     b.Property<DateTime>("DataAbertura")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<decimal>("SaldoInicial")
+                    b.Property<decimal>("Saldo")
                         .HasColumnType("decimal(65,30)");
 
                     b.Property<int>("TipoConta")
@@ -79,6 +79,36 @@ namespace Infra.Data.Migrations
                     b.ToTable("Contas", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.Transacao", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("ContaDestinoId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("ContaOrigemId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("DataTransacao")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("TipoTransacao")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Valor")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContaDestinoId");
+
+                    b.HasIndex("ContaOrigemId");
+
+                    b.ToTable("Transações", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Entities.Conta", b =>
                 {
                     b.HasOne("Domain.Entities.Cliente", "Cliente")
@@ -90,9 +120,33 @@ namespace Infra.Data.Migrations
                     b.Navigation("Cliente");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Transacao", b =>
+                {
+                    b.HasOne("Domain.Entities.Conta", "ContaDestino")
+                        .WithMany()
+                        .HasForeignKey("ContaDestinoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Conta", "ContaOrigem")
+                        .WithMany("Transacoes")
+                        .HasForeignKey("ContaOrigemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ContaDestino");
+
+                    b.Navigation("ContaOrigem");
+                });
+
             modelBuilder.Entity("Domain.Entities.Cliente", b =>
                 {
                     b.Navigation("Contas");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Conta", b =>
+                {
+                    b.Navigation("Transacoes");
                 });
 #pragma warning restore 612, 618
         }
