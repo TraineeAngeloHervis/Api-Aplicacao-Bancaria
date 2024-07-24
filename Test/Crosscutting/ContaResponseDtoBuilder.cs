@@ -13,7 +13,7 @@ public class ContaResponseDtoBuilder
         _faker = new Faker<ContaResponseDto>("pt_BR")
             .RuleFor(x => x.Id, f => f.Random.Guid())
             .RuleFor(x => x.ClienteId, f => f.Random.Guid())
-            .RuleFor(x => x.SaldoInicial, f => f.Random.Decimal())
+            .RuleFor(x => x.Saldo, f => f.Random.Decimal())
             .RuleFor(x => x.TipoConta, f => f.PickRandom<TipoConta>())
             .RuleFor(x => x.DataAbertura, f => f.Date.Past());
     }
@@ -24,7 +24,7 @@ public class ContaResponseDtoBuilder
     public ContaResponseDtoBuilder ComContaRequest (ContaRequestDto contaRequestDto)
     {
         _faker.RuleFor(x => x.ClienteId, f => contaRequestDto.ClienteId);
-        _faker.RuleFor(x => x.SaldoInicial, f => contaRequestDto.SaldoInicial);
+        _faker.RuleFor(x => x.Saldo, f => contaRequestDto.Saldo);
         _faker.RuleFor(x => x.TipoConta, f => contaRequestDto.TipoConta);
         _faker.RuleFor(x => x.DataAbertura, f => contaRequestDto.DataAbertura);
         return this;
@@ -34,7 +34,7 @@ public class ContaResponseDtoBuilder
     {
         _faker.RuleFor(x => x.Id, f => contaResponseDto.Id);
         _faker.RuleFor(x => x.ClienteId, f => contaResponseDto.ClienteId);
-        _faker.RuleFor(x => x.SaldoInicial, f => contaResponseDto.SaldoInicial);
+        _faker.RuleFor(x => x.Saldo, f => contaResponseDto.Saldo);
         _faker.RuleFor(x => x.TipoConta, f => contaResponseDto.TipoConta);
         _faker.RuleFor(x => x.DataAbertura, f => contaResponseDto.DataAbertura);
         return this;
@@ -54,7 +54,7 @@ public class ContaResponseDtoBuilder
     
     public ContaResponseDtoBuilder ComSaldoInicial(decimal saldoInicial)
     {
-        _faker.RuleFor(x => x.SaldoInicial, f => saldoInicial);
+        _faker.RuleFor(x => x.Saldo, f => saldoInicial);
         return this;
     }
     

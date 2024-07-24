@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddValidatorsFromAssemblyContaining<ClienteValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<ContaValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<TransacaoValidator>();
 
 builder.Services.AddCors(options =>
 {
@@ -24,11 +25,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddScoped<IClienteService, ClienteService>();
-builder.Services.AddScoped<IContaService, ContaService>();
-builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
-builder.Services.AddScoped<IContaRepository, ContaRepository>();
 builder.Services.AddScoped<IClienteValidator, ClienteValidator>();
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<IContaService, ContaService>();
+builder.Services.AddScoped<IContaRepository, ContaRepository>();
 builder.Services.AddScoped<IContaValidator, ContaValidator>();
+builder.Services.AddScoped<ITransacaoService, TransacaoService>();
+builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
+builder.Services.AddScoped<ITransacaoValidator, TransacaoValidator>();
 
 
 builder.Services.AddConfiguracaoAutoMapper();

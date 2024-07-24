@@ -12,7 +12,7 @@ public class ContaRequestDtoBuilder
     {
         _faker = new Faker<ContaRequestDto>("pt_BR")
             .RuleFor(x => x.ClienteId, f => f.Random.Guid())
-            .RuleFor(x => x.SaldoInicial, f => f.Random.Decimal())
+            .RuleFor(x => x.Saldo, f => f.Random.Decimal())
             .RuleFor(x => x.TipoConta, f => f.PickRandom<TipoConta>())
             .RuleFor(x => x.DataAbertura, f => f.Date.Past());
     }
@@ -23,7 +23,7 @@ public class ContaRequestDtoBuilder
     public ContaRequestDtoBuilder ComContaRequest (ContaRequestDto contaRequestDto)
     {
         _faker.RuleFor(x => x.ClienteId, f => contaRequestDto.ClienteId);
-        _faker.RuleFor(x => x.SaldoInicial, f => contaRequestDto.SaldoInicial);
+        _faker.RuleFor(x => x.Saldo, f => contaRequestDto.Saldo);
         _faker.RuleFor(x => x.TipoConta, f => contaRequestDto.TipoConta);
         _faker.RuleFor(x => x.DataAbertura, f => contaRequestDto.DataAbertura);
         return this;
@@ -37,7 +37,7 @@ public class ContaRequestDtoBuilder
     
     public ContaRequestDtoBuilder ComSaldoInicial(decimal saldoInicial)
     {
-        _faker.RuleFor(x => x.SaldoInicial, f => saldoInicial);
+        _faker.RuleFor(x => x.Saldo, f => saldoInicial);
         return this;
     }
     

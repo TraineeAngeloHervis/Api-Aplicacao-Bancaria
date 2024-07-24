@@ -12,7 +12,7 @@ public class ContaValidator : AbstractValidator<ContaRequestDto>, IContaValidato
             .NotEmpty()
             .WithMessage("O campo ClienteId é obrigatório.");
 
-        RuleFor(conta => conta.SaldoInicial)
+        RuleFor(conta => conta.Saldo)
             .GreaterThanOrEqualTo(0)
             .WithMessage("O saldo inicial não pode ser negativo.");
 
