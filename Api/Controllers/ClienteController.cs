@@ -20,8 +20,6 @@ public class ClienteController : ControllerBase
     [HttpPost("cadastrar")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CadastrarCliente([FromBody] ClienteRequestDto clienteRequestDto)
     {
         if (!_clienteValidator.EhValido(clienteRequestDto, out var errors)) return BadRequest(errors);
@@ -40,8 +38,6 @@ public class ClienteController : ControllerBase
     [HttpPut("atualizar/{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AtualizarCliente(Guid id, [FromBody] ClienteRequestDto clienteRequestDto)
     {
         if (!_clienteValidator.EhValido(clienteRequestDto, out var errors)) return BadRequest(errors);
