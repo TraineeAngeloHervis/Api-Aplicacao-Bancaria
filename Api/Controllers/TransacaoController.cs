@@ -9,12 +9,17 @@ namespace Api.Controllers;
 public class TransacaoController : ControllerBase
 {
     private readonly ITransacaoService _transacaoService;
-    private readonly ITransacaoValidator _transacaoValidator;
+    private readonly ITransferenciaValidator _transferenciaValidator;
+    private readonly ISaqueValidator _saqueValidator;
+    private readonly IDepositoValidator _depositoValidator;
 
-    public TransacaoController(ITransacaoService transacaoService, ITransacaoValidator transacaoValidator)
+    public TransacaoController(ITransacaoService transacaoService, ITransferenciaValidator transferenciaValidator, 
+        ISaqueValidator saqueValidator, IDepositoValidator depositoValidator)
     {
         _transacaoService = transacaoService;
-        _transacaoValidator = transacaoValidator;
+        _transferenciaValidator = transferenciaValidator;
+        _saqueValidator = saqueValidator;
+        _depositoValidator = depositoValidator;
     }
 
     [HttpPost("sacar")]
@@ -24,7 +29,7 @@ public class TransacaoController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> RealizarSaque([FromBody] TransacaoRequestDto transacaoRequestDto)
     {
-        if (!_transacaoValidator.EhValido(transacaoRequestDto, out var errors)) return BadRequest(errors);
+        if (!_transferenciaValidator.EhValido(transacaoRequestDto, out var errors)) return BadRequest(errors);
 
         try
         {
@@ -36,7 +41,7 @@ public class TransacaoController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
-    
+
 
     [HttpPost("depositar")]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -44,7 +49,7 @@ public class TransacaoController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> RealizarDeposito([FromBody] TransacaoRequestDto transacaoRequestDto)
     {
-        if (!_transacaoValidator.EhValido(transacaoRequestDto, out var errors)) return BadRequest(errors);
+        if (!_transferenciaValidator.EhValido(transacaoRequestDto, out var errors)) return BadRequest(errors);
 
         try
         {
@@ -64,7 +69,7 @@ public class TransacaoController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> RealizarTransferencia([FromBody] TransacaoRequestDto transacaoRequestDto)
     {
-        if (!_transacaoValidator.EhValido(transacaoRequestDto, out var errors)) return BadRequest(errors);
+        if (!_transferenciaValidator.EhValido(transacaoRequestDto, out var errors)) return BadRequest(errors);
 
         try
         {
@@ -76,13 +81,6 @@ public class TransacaoController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
-    //JSON para teste
-    //{
-    //    "ContaOrigemId": "b3b3b3b3-b3b3-b3b3-b3b3-b3b3b3b3b3b3",
-    //    "ContaDestinoId": "b3b3b3b3-b3b3-b3b3-b3b3-b3b3b3b3b3b3",
-    //    "Valor": 100,
-    //    "TipoTransacao": 2
-    //}
 
     [HttpGet("consultar/{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK)]

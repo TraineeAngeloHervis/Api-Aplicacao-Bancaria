@@ -10,6 +10,7 @@ public class TransacaoService : ITransacaoService
 {
     private readonly ITransacaoRepository _transacaoRepository;
     private readonly IMapper _mapper;
+    
 
     public TransacaoService(ITransacaoRepository transacaoRepository, IMapper mapper)
     {
@@ -42,8 +43,6 @@ public class TransacaoService : ITransacaoService
 
     public async Task<TransacaoResponseDto> RealizarTransferencia(TransacaoRequestDto transacaoRequestDto)
     {
-        ArgumentNullException.ThrowIfNull(transacaoRequestDto);
-        
         ArgumentNullException.ThrowIfNull(transacaoRequestDto);
 
         var contaOrigem = await _transacaoRepository.ConsultarConta(transacaoRequestDto.ContaOrigemId);

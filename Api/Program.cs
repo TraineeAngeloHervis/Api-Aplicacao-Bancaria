@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddValidatorsFromAssemblyContaining<ClienteValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<ContaValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<TransacaoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<TransferenciaValidator>();
 
 builder.Services.AddCors(options =>
 {
@@ -32,7 +32,7 @@ builder.Services.AddScoped<IContaRepository, ContaRepository>();
 builder.Services.AddScoped<IContaValidator, ContaValidator>();
 builder.Services.AddScoped<ITransacaoService, TransacaoService>();
 builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
-builder.Services.AddScoped<ITransacaoValidator, TransacaoValidator>();
+builder.Services.AddScoped<ITransferenciaValidator, TransferenciaValidator>();
 
 
 builder.Services.AddConfiguracaoAutoMapper();

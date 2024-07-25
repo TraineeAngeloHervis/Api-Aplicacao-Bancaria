@@ -8,20 +8,20 @@ public class ClienteValidator : AbstractValidator<ClienteRequestDto>, IClienteVa
 {
     public ClienteValidator()
     {
-        RuleFor(cliente => cliente.Nome)
+        RuleFor(c => c.Nome)
             .NotEmpty()
             .WithMessage("O nome do cliente é obrigatório.");
 
-        RuleFor(cliente => cliente.Cpf)
+        RuleFor(c => c.Cpf)
             .NotEmpty()
             .Matches(@"\d{11}")
             .WithMessage("O CPF do cliente é inválido.");
 
-        RuleFor(cliente => cliente.DataNascimento)
+        RuleFor(c => c.DataNascimento)
             .LessThan(DateTime.Now)
             .WithMessage("A data de nascimento não pode ser maior que a data atual.");
 
-        RuleFor(cliente => cliente.EstadoCivil)
+        RuleFor(c => c.EstadoCivil)
             .IsInEnum()
             .WithMessage("Estado civil inválido.");
     }
