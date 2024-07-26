@@ -1,5 +1,6 @@
 using Crosscutting.Dto;
-using Domain.Interfaces;
+using Domain.Interfaces.Clientes;
+using Domain.Interfaces.Contas;
 using Domain.Validators;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,11 +28,11 @@ public class ContaController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> CadastrarConta([FromBody] ContaRequestDto contaRequestDto)
     {
-        if (!_contaValidator.EhValido(contaRequestDto, out var errors)) return BadRequest(errors);
+        if (!await _contaValidator.EhValido(contaRequestDto, out var errors)) return BadRequest(errors);
         try
         {
             var cliente = await _clienteService.ConsultarCliente(contaRequestDto.ClienteId);
-            if (cliente == null) return NotFound($"Cliente com ID {contaRequestDto.ClienteId} não encontrado.");
+            if (cliente == null) return NotFound($"Clientes com ID {contaRequestDto.ClienteId} não encontrado.");
 
             var contaCadastrada = await _contaService
                 .CadastrarConta(contaRequestDto, contaRequestDto.ClienteId);
@@ -51,11 +52,11 @@ public class ContaController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> AtualizarConta(Guid id, [FromBody] ContaRequestDto contaRequestDto)
     {
-        if (!_contaValidator.EhValido(contaRequestDto, out var errors)) return BadRequest(errors);
+        if (!await _contaValidator.EhValido(contaRequestDto, out var errors)) return BadRequest(errors);
         try
         {
             var cliente = await _clienteService.ConsultarCliente(contaRequestDto.ClienteId);
-            if (cliente == null) return NotFound($"Cliente com ID {contaRequestDto.ClienteId} não encontrado.");
+            if (cliente == null) return NotFound($"Clientes com ID {contaRequestDto.ClienteId} não encontrado.");
 
             var contaAtualizada = await _contaService
                 .AtualizarConta(contaRequestDto.ClienteId, contaRequestDto, id);

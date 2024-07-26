@@ -1,5 +1,5 @@
 ﻿using Crosscutting.Dto;
-using Domain.Interfaces;
+using Domain.Interfaces.Clientes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -22,7 +22,7 @@ public class ClienteController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CadastrarCliente([FromBody] ClienteRequestDto clienteRequestDto)
     {
-        if (!_clienteValidator.EhValido(clienteRequestDto, out var errors)) return BadRequest(errors);
+        if (!await _clienteValidator.EhValido(clienteRequestDto, out var errors)) return BadRequest(errors);
 
         try
         {
@@ -40,7 +40,7 @@ public class ClienteController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AtualizarCliente(Guid id, [FromBody] ClienteRequestDto clienteRequestDto)
     {
-        if (!_clienteValidator.EhValido(clienteRequestDto, out var errors)) return BadRequest(errors);
+        if (!await _clienteValidator.EhValido(clienteRequestDto, out var errors)) return BadRequest(errors);
 
         try
         {

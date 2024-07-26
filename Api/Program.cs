@@ -1,5 +1,7 @@
 using Api.Configuration;
-using Domain.Interfaces;
+using Domain.Interfaces.Clientes;
+using Domain.Interfaces.Contas;
+using Domain.Interfaces.Transacoes;
 using Domain.Services;
 using Domain.Validators;
 using FluentValidation;
@@ -30,9 +32,15 @@ builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IContaService, ContaService>();
 builder.Services.AddScoped<IContaRepository, ContaRepository>();
 builder.Services.AddScoped<IContaValidator, ContaValidator>();
-builder.Services.AddScoped<ITransacaoService, TransacaoService>();
-builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
+builder.Services.AddScoped<ITransferenciaService, TransferenciaService>();
 builder.Services.AddScoped<ITransferenciaValidator, TransferenciaValidator>();
+builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
+builder.Services.AddScoped<ITransacaoService, TransacaoService>();
+builder.Services.AddScoped<IDepositoService, DepositoService>();
+builder.Services.AddScoped<IDepositoValidator, DepositoValidator>();
+builder.Services.AddScoped<ISaqueService, SaqueService>();
+builder.Services.AddScoped<ISaqueValidator, SaqueValidator>();
+
 
 
 builder.Services.AddConfiguracaoAutoMapper();

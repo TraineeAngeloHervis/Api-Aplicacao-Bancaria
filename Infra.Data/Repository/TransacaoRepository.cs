@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
-using Domain.Interfaces;
+using Domain.Interfaces.Transacoes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infra.Data.Repository;
 
@@ -20,9 +21,9 @@ public class TransacaoRepository : ITransacaoRepository
         return transacao;
     }
 
-    public async Task<Conta> AtualizarSaldo(Guid contaId, decimal valor)
+    public async Task<Conta> AtualizarSaldo(Guid contaOrigemId, decimal valor)
     {
-        var conta = await _context.Contas.FindAsync(contaId);
+        var conta = await _context.Contas.FindAsync(contaOrigemId);
         if (conta == null) return null;
         conta.Saldo += valor;
         _context.Contas.Update(conta);
@@ -31,21 +32,25 @@ public class TransacaoRepository : ITransacaoRepository
         return conta;
     }
 
-    public async Task<Conta> ConsultarConta(Guid contaId)
+    public async Task<Conta> ConsultarConta(Guid contaOrigemId)
     {
-        return await _context.Contas.FindAsync(contaId);
+        return await _context.Contas.FindAsync(contaOrigemId);
     }
 
-    public async Task<IEnumerable<Transacao>> GerarExtrato(Guid contaId)
+    public async Task<IDbContextTransaction> CriarTransacaoAsync()
     {
-        return await _context.Transacoes.Where(t => 
-                t.ContaOrigemId == contaId || 
-                t.ContaDestinoId == contaId)
-            .ToListAsync();
+        return await _context.Database.BeginTransactionAsync();
     }
-    
+
     public async Task<Transacao> ConsultarTransacao(Guid id)
     {
-        return await _context.Transacoes.FindAsync(id);
+        return await _context.Transacoes.FirstOrDefaultAsync(t => t.Id == id);
+    }
+
+    public async Task<IEnumerable<Transacao>> GerarExtrato(Guid contaOrigemId)
+    {
+        return await _context.Transacoes
+            .Where(t => t.ContaOrigemId == contaOrigemId)
+            .ToListAsync();
     }
 }

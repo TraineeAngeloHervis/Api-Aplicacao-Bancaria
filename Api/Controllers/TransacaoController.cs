@@ -1,60 +1,53 @@
 ﻿using Crosscutting.Dto;
-using Domain.Interfaces;
+using Domain.Interfaces.Transacoes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TransacaoController : ControllerBase
+public class TransacaoController(
+    ISaqueService saqueService,
+    IDepositoService depositoService,
+    ITransferenciaService transferenciaService,
+    ITransacaoService transacaoService,
+    ISaqueValidator saqueValidator,
+    IDepositoValidator depositoValidator,
+    ITransferenciaValidator transferenciaValidator)
+    : ControllerBase
 {
-    private readonly ITransacaoService _transacaoService;
-    private readonly ITransferenciaValidator _transferenciaValidator;
-    private readonly ISaqueValidator _saqueValidator;
-    private readonly IDepositoValidator _depositoValidator;
-
-    public TransacaoController(ITransacaoService transacaoService, ITransferenciaValidator transferenciaValidator, 
-        ISaqueValidator saqueValidator, IDepositoValidator depositoValidator)
-    {
-        _transacaoService = transacaoService;
-        _transferenciaValidator = transferenciaValidator;
-        _saqueValidator = saqueValidator;
-        _depositoValidator = depositoValidator;
-    }
-
     [HttpPost("sacar")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> RealizarSaque([FromBody] TransacaoRequestDto transacaoRequestDto)
+    public async Task<IActionResult> RealizarSaque([FromBody] SaqueRequestDto saqueRequestDto)
     {
-        if (!_transferenciaValidator.EhValido(transacaoRequestDto, out var errors)) return BadRequest(errors);
+        if (!await saqueValidator.EhValido(saqueRequestDto, out var errors)) return BadRequest(errors);
 
         try
         {
-            var transacao = await _transacaoService.RealizarSaque(transacaoRequestDto);
-            return CreatedAtAction(nameof(ConsultarTransacao), new { id = transacao.Id }, transacao);
+            var saqueRealizado = await saqueService.RealizarSaque(saqueRequestDto);
+            return CreatedAtAction(nameof(ConsultarTransacao), new { id = saqueRealizado.Id }, saqueRealizado);
         }
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
         }
     }
-
 
     [HttpPost("depositar")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> RealizarDeposito([FromBody] TransacaoRequestDto transacaoRequestDto)
+    public async Task<IActionResult> RealizarDeposito([FromBody] DepositoRequestDto depositoRequestDto)
     {
-        if (!_transferenciaValidator.EhValido(transacaoRequestDto, out var errors)) return BadRequest(errors);
+        if (!await depositoValidator.EhValido(depositoRequestDto, out var errors)) return BadRequest(errors);
 
         try
         {
-            var transacao = await _transacaoService.RealizarDeposito(transacaoRequestDto);
-            return CreatedAtAction(nameof(ConsultarTransacao), new { id = transacao.Id }, transacao);
+            var depositoRealizado = await depositoService.RealizarDeposito(depositoRequestDto);
+            return CreatedAtAction(nameof(ConsultarTransacao), new { id = depositoRealizado.Id }, depositoRealizado);
         }
         catch (Exception ex)
         {
@@ -62,19 +55,19 @@ public class TransacaoController : ControllerBase
         }
     }
 
-
     [HttpPost("transferir")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> RealizarTransferencia([FromBody] TransacaoRequestDto transacaoRequestDto)
+    public async Task<IActionResult> RealizarTransferencia([FromBody] TransferenciaRequestDto transferenciaRequestDto)
     {
-        if (!_transferenciaValidator.EhValido(transacaoRequestDto, out var errors)) return BadRequest(errors);
+        if (!await transferenciaValidator.EhValido(transferenciaRequestDto, out var errors)) return BadRequest(errors);
 
         try
         {
-            var transacao = await _transacaoService.RealizarTransferencia(transacaoRequestDto);
-            return CreatedAtAction(nameof(ConsultarTransacao), new { id = transacao.Id }, transacao);
+            var transferenciaRealizada = await transferenciaService.RealizarTransferencia(transferenciaRequestDto);
+            return CreatedAtAction(nameof(ConsultarTransacao), new { id = transferenciaRealizada.Id },
+                transferenciaRealizada);
         }
         catch (Exception ex)
         {
@@ -90,7 +83,7 @@ public class TransacaoController : ControllerBase
     {
         try
         {
-            var transacao = await _transacaoService.ConsultarTransacao(id);
+            var transacao = await transacaoService.ConsultarTransacao(id);
             return transacao == null ? NotFound() : Ok(transacao);
         }
         catch (Exception ex)
@@ -106,7 +99,7 @@ public class TransacaoController : ControllerBase
     {
         try
         {
-            var transacoes = await _transacaoService.GerarExtrato(contaId);
+            var transacoes = await transacaoService.GerarExtrato(contaId);
             return Ok(transacoes);
         }
         catch (Exception ex)

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infra.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240724211850_InitialCreate")]
+    [Migration("20240725234658_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -85,7 +85,7 @@ namespace Infra.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("ContaDestinoId")
+                    b.Property<Guid?>("ContaId")
                         .HasColumnType("char(36)");
 
                     b.Property<Guid>("ContaOrigemId")
@@ -94,15 +94,12 @@ namespace Infra.Data.Migrations
                     b.Property<DateTime>("DataTransacao")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("TipoTransacao")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Valor")
                         .HasColumnType("decimal(65,30)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ContaDestinoId");
+                    b.HasIndex("ContaId");
 
                     b.HasIndex("ContaOrigemId");
 
@@ -122,21 +119,17 @@ namespace Infra.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.Transacao", b =>
                 {
-                    b.HasOne("Domain.Entities.Conta", "ContaDestino")
-                        .WithMany()
-                        .HasForeignKey("ContaDestinoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Conta", "ContaOrigem")
+                    b.HasOne("Domain.Entities.Conta", null)
                         .WithMany("Transacoes")
+                        .HasForeignKey("ContaId");
+
+                    b.HasOne("Domain.Entities.Conta", "Conta")
+                        .WithMany()
                         .HasForeignKey("ContaOrigemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ContaDestino");
-
-                    b.Navigation("ContaOrigem");
+                    b.Navigation("Conta");
                 });
 
             modelBuilder.Entity("Domain.Entities.Cliente", b =>

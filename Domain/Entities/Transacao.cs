@@ -1,15 +1,10 @@
-﻿using Crosscutting.Enums;
-
-namespace Domain.Entities;
+﻿namespace Domain.Entities;
 
 public class Transacao
 {
     public Guid Id { get; set; }
     public Guid ContaOrigemId { get; set; }
-    public Conta ContaOrigem { get; set; }
-    public Guid ContaDestinoId { get; set; }
-    public Conta ContaDestino { get; set; }
+    public Conta Conta { get; set; }
     public decimal Valor { get; set; }
     public DateTime DataTransacao { get; set; } = DateTime.Now;
-    public TipoTransacao TipoTransacao { get; set; }
 }

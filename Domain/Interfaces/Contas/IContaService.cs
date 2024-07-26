@@ -1,6 +1,6 @@
 using Crosscutting.Dto;
 
-namespace Domain.Interfaces;
+namespace Domain.Interfaces.Contas;
 
 public interface IContaService
 {

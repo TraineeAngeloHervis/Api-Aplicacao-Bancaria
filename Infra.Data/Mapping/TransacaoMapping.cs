@@ -13,31 +13,19 @@ public class TransacaoMapping : IEntityTypeConfiguration<Transacao>
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
-            .ValueGeneratedOnAdd()
-            .IsRequired()
-            .HasColumnType("char(36)");
+            .ValueGeneratedOnAdd();
 
         builder.Property(x => x.ContaOrigemId)
             .IsRequired();
-
-        builder.Property(x => x.ContaDestinoId)
+        
+        builder.Property(x => x.DataTransacao)
             .IsRequired();
 
         builder.Property(x => x.Valor)
             .IsRequired();
 
-        builder.Property(x => x.DataTransacao)
-            .IsRequired();
-
-        builder.Property(x => x.TipoTransacao)
-            .IsRequired();
-
-        builder.HasOne(c => c.ContaOrigem)
-            .WithMany(c => c.Transacoes)
-            .HasForeignKey(x => x.ContaOrigemId);
-
-        builder.HasOne(x => x.ContaDestino)
+        builder.HasOne(x => x.Conta)
             .WithMany()
-            .HasForeignKey(x => x.ContaDestinoId);
+            .HasForeignKey(x => x.ContaOrigemId);
     }
 }

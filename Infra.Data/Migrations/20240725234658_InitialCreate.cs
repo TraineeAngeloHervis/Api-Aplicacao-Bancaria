@@ -60,20 +60,18 @@ namespace Infra.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     ContaOrigemId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
-                    ContaDestinoId = table.Column<Guid>(type: "char(36)", nullable: false, collation: "ascii_general_ci"),
                     Valor = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
                     DataTransacao = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    TipoTransacao = table.Column<int>(type: "int", nullable: false)
+                    ContaId = table.Column<Guid>(type: "char(36)", nullable: true, collation: "ascii_general_ci")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Transações", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Transações_Contas_ContaDestinoId",
-                        column: x => x.ContaDestinoId,
+                        name: "FK_Transações_Contas_ContaId",
+                        column: x => x.ContaId,
                         principalTable: "Contas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Transações_Contas_ContaOrigemId",
                         column: x => x.ContaOrigemId,
@@ -89,9 +87,9 @@ namespace Infra.Data.Migrations
                 column: "ClienteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transações_ContaDestinoId",
+                name: "IX_Transações_ContaId",
                 table: "Transações",
-                column: "ContaDestinoId");
+                column: "ContaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transações_ContaOrigemId",

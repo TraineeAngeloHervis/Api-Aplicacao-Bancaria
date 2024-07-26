@@ -1,6 +1,5 @@
-using Crosscutting.Enums;
 using Domain.Entities;
-using Domain.Interfaces;
+using Domain.Interfaces.Contas;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Data.Repository;
@@ -47,6 +46,8 @@ public class ContaRepository : IContaRepository
 
     public async Task<IEnumerable<Conta>> ListarContas(Guid clienteId)
     {
-        return await _context.Contas.Where(c => c.ClienteId == clienteId).ToListAsync();
+        return await _context.Contas
+            .Where(c => c.ClienteId == clienteId)
+            .ToListAsync();
     }
 }

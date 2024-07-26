@@ -1,6 +1,7 @@
 using Api.Controllers;
 using Crosscutting.Dto;
 using Domain.Interfaces;
+using Domain.Interfaces.Cliente;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -10,16 +11,16 @@ namespace Test.Api;
 
 public class ClienteControllerTests
 {
-    private readonly Mock<IClienteService> _clienteService;
-    private readonly Mock<IClienteValidator> _clienteValidator;
+    private readonly Mock<IClienteService> _clienteServiceMock;
+    private readonly Mock<IClienteValidator> _clienteValidatorMock;
     private readonly ClienteController _clienteController;
 
 
     public ClienteControllerTests()
     {
-        _clienteService = new Mock<IClienteService>();
-        _clienteValidator = new Mock<IClienteValidator>();
-        _clienteController = new ClienteController(_clienteService.Object, _clienteValidator.Object);
+        _clienteServiceMock = new Mock<IClienteService>();
+        _clienteValidatorMock = new Mock<IClienteValidator>();
+        _clienteController = new ClienteController(_clienteServiceMock.Object, _clienteValidatorMock.Object);
     }
 
     [Fact]
@@ -28,12 +29,12 @@ public class ClienteControllerTests
         // Arrange
         var clienteRequestDto = ClienteRequestDtoBuilder.Novo().Build();
         var clienteResponseDto = ClienteResponseDtoBuilder.Novo().Build();
-
-        _clienteValidator.Setup(v => v.EhValido(It
+        
+        _clienteValidatorMock.Setup(v => v.EhValido(It
                 .IsAny<ClienteRequestDto>(), out It.Ref<IList<string>>.IsAny))
-            .Returns(true);
+            .ReturnsAsync(true);
 
-        _clienteService.Setup(x => x.CadastrarCliente(It
+        _clienteServiceMock.Setup(x => x.CadastrarCliente(It
                 .IsAny<ClienteRequestDto>()))
             .ReturnsAsync(clienteResponseDto);
 
@@ -53,11 +54,11 @@ public class ClienteControllerTests
         var clienteRequestDto = ClienteRequestDtoBuilder.Novo().Build();
         var clienteResponseDto = ClienteResponseDtoBuilder.Novo().Build();
 
-        _clienteValidator.Setup(v => v.EhValido(It
+        _clienteValidatorMock.Setup(v => v.EhValido(It
                 .IsAny<ClienteRequestDto>(), out It.Ref<IList<string>>.IsAny))
-            .Returns(true);
+            .ReturnsAsync(true);
         
-        _clienteService.Setup(x => x.AtualizarCliente(It.IsAny<Guid>(), It
+        _clienteServiceMock.Setup(x => x.AtualizarCliente(It.IsAny<Guid>(), It
                 .IsAny<ClienteRequestDto>()))
             .ReturnsAsync(clienteResponseDto);
 
@@ -77,7 +78,7 @@ public class ClienteControllerTests
     {
         // Arrange
         var clienteResponseDto = ClienteResponseDtoBuilder.Novo().Build();
-        _clienteService.Setup(x => x.ExcluirCliente(It.IsAny<Guid>()))
+        _clienteServiceMock.Setup(x => x.ExcluirCliente(It.IsAny<Guid>()))
             .ReturnsAsync(true);
         
         // Act
@@ -92,7 +93,7 @@ public class ClienteControllerTests
     {
         // Arrange
         var clienteResponseDto = ClienteResponseDtoBuilder.Novo().Build();
-        _clienteService.Setup(x => x.ConsultarCliente(It.IsAny<Guid>()))
+        _clienteServiceMock.Setup(x => x.ConsultarCliente(It.IsAny<Guid>()))
             .ReturnsAsync(clienteResponseDto);
 
         // Act
@@ -117,7 +118,7 @@ public class ClienteControllerTests
             ClienteResponseDtoBuilder.Novo().Build()
         };
 
-        _clienteService.Setup(x => x.ListarClientes())
+        _clienteServiceMock.Setup(x => x.ListarClientes())
             .ReturnsAsync(clientes);
 
         // Act

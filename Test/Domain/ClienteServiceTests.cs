@@ -2,6 +2,7 @@
 using Crosscutting.Dto;
 using Domain.Entities;
 using Domain.Interfaces;
+using Domain.Interfaces.Cliente;
 using Domain.Services;
 using FluentAssertions;
 using Moq;
