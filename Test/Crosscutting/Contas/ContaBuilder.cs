@@ -23,13 +23,9 @@ public class ContaBuilder
     public static ContaBuilder Novo()
         => new();
     
-    public ContaBuilder ComConta(Conta conta)
+    public ContaBuilder ComSaldo(decimal saldo)
     {
-        _faker.RuleFor(x => x.Id, f => conta.Id);
-        _faker.RuleFor(x => x.ClienteId, f => conta.ClienteId);
-        _faker.RuleFor(x => x.Saldo, f => conta.Saldo);
-        _faker.RuleFor(x => x.TipoConta, f => conta.TipoConta);
-        _faker.RuleFor(x => x.DataAbertura, f => conta.DataAbertura);
+        _faker.RuleFor(x => x.Saldo, f => saldo);
         return this;
     }
 

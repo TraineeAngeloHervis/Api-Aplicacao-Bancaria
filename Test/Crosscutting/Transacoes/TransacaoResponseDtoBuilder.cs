@@ -1,6 +1,7 @@
 ﻿using Bogus;
 using Crosscutting.Dto;
 using Crosscutting.Enums;
+using Domain.Entities;
 
 namespace Test.Crosscutting.Transacoes;
 
@@ -14,13 +15,23 @@ public class TransacaoResponseDtoBuilder
             .RuleFor(x => x.Id, f => f.Random.Guid())
             .RuleFor(x => x.Valor, f => f.Random.Decimal(0, 100))
             .RuleFor(x => x.ContaOrigemId, f => f.Random.Guid())
-            .RuleFor(x => x.ContaDestinoId, f => f.Random.Guid())
             .RuleFor(x => x.DataTransacao, f => f.Date.Past());
     }
 
     public static TransacaoResponseDtoBuilder Novo()
         => new();
-    
+
+
+    public TransacaoResponseDtoBuilder ComTransacao(Transacao transacao )
+    {
+        _faker.RuleFor(x => x.Id, f => transacao.Id);
+        _faker.RuleFor(x => x.Valor, f => transacao.Valor);
+        _faker.RuleFor(x => x.ContaOrigemId, f => transacao.ContaOrigemId);
+        _faker.RuleFor(x => x.ContaDestinoId, f => transacao.ContaDestinoId);
+        _faker.RuleFor(x => x.DataTransacao, f => transacao.DataTransacao);
+        _faker.RuleFor(x => x.TipoTransacao, f => transacao.TipoTransacao);
+        return this;
+    }
     public TransacaoResponseDtoBuilder ComDepositoRequest(DepositoRequestDto depositoRequestDto)
     {
         _faker.RuleFor(x => x.Valor, f => depositoRequestDto.Valor);

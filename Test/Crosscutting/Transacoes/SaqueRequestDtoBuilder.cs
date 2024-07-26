@@ -11,7 +11,7 @@ public class SaqueRequestDtoBuilder
     public SaqueRequestDtoBuilder()
     {
         _faker = new Faker<SaqueRequestDto>("pt_BR")
-            .RuleFor(x => x.Valor, f => f.Random.Decimal(0, 100))
+            .RuleFor(x => x.Valor, f => f.Random.Decimal(1, 100))
             .RuleFor(x => x.ContaOrigemId, f => f.Random.Guid())
             .RuleFor(x => x.TipoTransacao, f => TipoTransacao.Saque);
     }

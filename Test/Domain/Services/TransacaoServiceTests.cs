@@ -25,11 +25,10 @@ public class TransacaoServiceTests
     public async Task Transacao_QuandoConsultarTransacao_DeveRetornarTransacao()
     {
         // Arrange
-        var transacaoResponseDto = TransacaoResponseDtoBuilder.Novo().Build();
         var transacao = TransacaoBuilder.Novo().Build();
+        var transacaoResponseDto = TransacaoResponseDtoBuilder.Novo().ComTransacao(transacao).Build();
 
         _mapperMock.Setup(x => x.Map<TransacaoResponseDto>(transacao)).Returns(transacaoResponseDto);
-        await _transacaoService.ConsultarTransacao(transacao.Id);
         _transacaoRepositoryMock.Setup(x => x
                 .ConsultarTransacao(transacao.Id))
             .ReturnsAsync(transacao);

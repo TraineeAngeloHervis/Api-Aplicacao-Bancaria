@@ -5,6 +5,7 @@ using Domain.Interfaces.Transacoes;
 using Domain.Services;
 using FluentAssertions;
 using Moq;
+using Test.Crosscutting.Contas;
 using Test.Crosscutting.Transacoes;
 
 namespace Test.Domain.Services;
@@ -26,22 +27,41 @@ public class TransferenciaServiceTests
     public async Task Transferencia_QuandoRealizarTransferencia_DeveRetornarTransacao()
     {
         // Arrange
-        var transferenciaRequestDto = TransferenciaRequestDtoBuilder.Novo().Build();
-        var transacao = TransacaoBuilder.Novo().Build();
-        var transacaoResponseDto =
-            TransacaoResponseDtoBuilder.Novo().ComTransferenciaRequest(transferenciaRequestDto).Build();
+        var contaOrigem = ContaBuilder.Novo().ComSaldo(1000).Build();
+        var contaDestino = ContaBuilder.Novo().ComSaldo(1000).Build();
 
-        _mapperMock.Setup(x => x.Map<Transacao>(transferenciaRequestDto)).Returns(transacao);
-        await _transferenciaService.RealizarTransferencia(transferenciaRequestDto);
+        var transferenciaRequestDto = TransferenciaRequestDtoBuilder.Novo()
+            .ComContaOrigemId(contaOrigem.Id)
+            .ComContaDestinoId(contaDestino.Id)
+            .ComValor(500)
+            .Build();
+
+        var transacao = TransacaoBuilder.Novo().ComTransferenciaRequest(transferenciaRequestDto).Build();
+        var transacaoResponseDto = TransacaoResponseDtoBuilder.Novo().ComTransacao(transacao).Build();
+
         _transacaoRepositoryMock.Setup(x => x
-                .AtualizarSaldo(transferenciaRequestDto.ContaOrigemId, -transferenciaRequestDto.Valor))
-            .ReturnsAsync(transacao.ContaOrigem);
+                .ConsultarConta(transferenciaRequestDto.ContaOrigemId))
+            .ReturnsAsync(contaOrigem);
 
         _transacaoRepositoryMock.Setup(x => x
-                .AtualizarSaldo(transferenciaRequestDto.ContaDestinoId, transferenciaRequestDto.Valor))
-            .ReturnsAsync(transacao.ContaDestino);
+                .ConsultarConta(transferenciaRequestDto.ContaDestinoId))
+            .ReturnsAsync(contaDestino);
 
+        _mapperMock.Setup(x => x
+            .Map<Transacao>(transferenciaRequestDto)).Returns(transacao);
+
+        _transacaoRepositoryMock.Setup(x => x
+                .AtualizarSaldo(contaOrigem.Id, -transferenciaRequestDto.Valor))
+            .ReturnsAsync(contaOrigem);
+
+        _transacaoRepositoryMock.Setup(x => x
+                .AtualizarSaldo(contaDestino.Id, transferenciaRequestDto.Valor))
+            .ReturnsAsync(contaDestino);
+
+        _transacaoRepositoryMock.Setup(x => x
+            .SalvarTransacao(transacao)).ReturnsAsync(transacao);
         _mapperMock.Setup(x => x.Map<TransacaoResponseDto>(transacao)).Returns(transacaoResponseDto);
+
 
         // Act
         var resultadoEsperado = await _transferenciaService.RealizarTransferencia(transferenciaRequestDto);
