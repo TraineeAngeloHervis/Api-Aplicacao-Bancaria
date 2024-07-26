@@ -1,11 +1,11 @@
 using Api.Controllers;
 using Crosscutting.Dto;
-using Domain.Interfaces;
-using Domain.Interfaces.Cliente;
+using Domain.Interfaces.Clientes;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Test.Crosscutting;
+using Test.Crosscutting.Clientes;
 
 namespace Test.Api;
 

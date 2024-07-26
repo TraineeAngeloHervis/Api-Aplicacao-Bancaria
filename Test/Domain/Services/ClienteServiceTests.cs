@@ -1,14 +1,13 @@
 ﻿using AutoMapper;
 using Crosscutting.Dto;
 using Domain.Entities;
-using Domain.Interfaces;
-using Domain.Interfaces.Cliente;
+using Domain.Interfaces.Clientes;
 using Domain.Services;
 using FluentAssertions;
 using Moq;
-using Test.Crosscutting;
+using Test.Crosscutting.Clientes;
 
-namespace Test.Domain;
+namespace Test.Domain.Services;
 
 public class ClienteServiceTests
 {

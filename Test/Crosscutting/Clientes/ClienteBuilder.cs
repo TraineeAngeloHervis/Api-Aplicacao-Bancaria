@@ -3,7 +3,7 @@ using Bogus.Extensions.Brazil;
 using Crosscutting.Enums;
 using Domain.Entities;
 
-namespace Test.Crosscutting;
+namespace Test.Crosscutting.Clientes;
 
 public class ClienteBuilder
 {

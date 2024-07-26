@@ -2,7 +2,7 @@ using Bogus;
 using Crosscutting.Dto;
 using Crosscutting.Enums;
 
-namespace Test.Crosscutting;
+namespace Test.Crosscutting.Contas;
 
 public class ContaRequestDtoBuilder
 {

@@ -1,9 +1,9 @@
 ﻿using Crosscutting.Enums;
 using Domain.Validators;
 using FluentAssertions;
-using Test.Crosscutting;
+using Test.Crosscutting.Contas;
 
-namespace Test.Domain;
+namespace Test.Domain.Validators;
 
 public class ContaValidatorTests
 {

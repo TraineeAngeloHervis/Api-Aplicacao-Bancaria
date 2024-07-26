@@ -1,8 +1,9 @@
 ﻿using Bogus;
 using Crosscutting.Enums;
 using Domain.Entities;
+using Test.Crosscutting.Clientes;
 
-namespace Test.Crosscutting;
+namespace Test.Crosscutting.Contas;
 
 public class ContaBuilder
 {

@@ -1,6 +1,4 @@
 ﻿using Crosscutting.Dto;
-using Crosscutting.Enums;
-using Domain.Interfaces;
 using Domain.Interfaces.Transacoes;
 using FluentValidation;
 

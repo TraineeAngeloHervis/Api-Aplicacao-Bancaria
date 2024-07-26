@@ -6,4 +6,5 @@ public class DepositoRequestDto
 {
     public Guid ContaOrigemId { get; set; }
     public decimal Valor { get; set; }
+    public TipoTransacao TipoTransacao { get; set; }
 }

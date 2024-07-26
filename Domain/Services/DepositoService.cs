@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Crosscutting.Dto;
+using Crosscutting.Enums;
 using Domain.Entities;
 using Domain.Interfaces.Transacoes;
 
@@ -24,8 +25,9 @@ public class DepositoService : IDepositoService
         if (conta == null) return null;
         
         await _transacaoRepository.AtualizarSaldo(conta.Id, depositoRequestDto.Valor);
+        depositoRequestDto.TipoTransacao = TipoTransacao.Deposito;
 
-        var deposito = _mapper.Map<Deposito>(depositoRequestDto);
+        var deposito = _mapper.Map<Transacao>(depositoRequestDto);
         var transacaoSalva = await _transacaoRepository.SalvarTransacao(deposito);
 
         return _mapper.Map<TransacaoResponseDto>(transacaoSalva);

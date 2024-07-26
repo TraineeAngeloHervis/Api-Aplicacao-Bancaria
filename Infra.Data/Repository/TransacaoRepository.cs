@@ -1,7 +1,6 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces.Transacoes;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infra.Data.Repository;
 
@@ -35,11 +34,6 @@ public class TransacaoRepository : ITransacaoRepository
     public async Task<Conta> ConsultarConta(Guid contaOrigemId)
     {
         return await _context.Contas.FindAsync(contaOrigemId);
-    }
-
-    public async Task<IDbContextTransaction> CriarTransacaoAsync()
-    {
-        return await _context.Database.BeginTransactionAsync();
     }
 
     public async Task<Transacao> ConsultarTransacao(Guid id)

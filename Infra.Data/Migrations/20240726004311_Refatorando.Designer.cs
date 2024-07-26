@@ -4,6 +4,7 @@ using Infra.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infra.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240726004311_Refatorando")]
+    partial class Refatorando
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,9 +94,6 @@ namespace Infra.Data.Migrations
                     b.Property<DateTime>("DataTransacao")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("TipoTransacao")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Valor")
                         .HasColumnType("decimal(65,30)");
 
@@ -123,15 +123,15 @@ namespace Infra.Data.Migrations
                         .WithMany("Transacoes")
                         .HasForeignKey("ContaDestinoId");
 
-                    b.HasOne("Domain.Entities.Conta", "ContaOrigem")
+                    b.HasOne("Domain.Entities.Conta", "Conta")
                         .WithMany()
                         .HasForeignKey("ContaOrigemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("ContaDestino");
+                    b.Navigation("Conta");
 
-                    b.Navigation("ContaOrigem");
+                    b.Navigation("ContaDestino");
                 });
 
             modelBuilder.Entity("Domain.Entities.Cliente", b =>

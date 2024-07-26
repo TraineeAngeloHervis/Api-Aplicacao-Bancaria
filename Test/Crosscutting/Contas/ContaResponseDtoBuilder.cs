@@ -2,7 +2,7 @@ using Bogus;
 using Crosscutting.Dto;
 using Crosscutting.Enums;
 
-namespace Test.Crosscutting;
+namespace Test.Crosscutting.Contas;
 
 public class ContaResponseDtoBuilder
 {
@@ -17,11 +17,11 @@ public class ContaResponseDtoBuilder
             .RuleFor(x => x.TipoConta, f => f.PickRandom<TipoConta>())
             .RuleFor(x => x.DataAbertura, f => f.Date.Past());
     }
-    
+
     public static ContaResponseDtoBuilder Novo()
         => new();
-    
-    public ContaResponseDtoBuilder ComContaRequest (ContaRequestDto contaRequestDto)
+
+    public ContaResponseDtoBuilder ComContaRequest(ContaRequestDto contaRequestDto)
     {
         _faker.RuleFor(x => x.ClienteId, f => contaRequestDto.ClienteId);
         _faker.RuleFor(x => x.Saldo, f => contaRequestDto.Saldo);
@@ -29,8 +29,8 @@ public class ContaResponseDtoBuilder
         _faker.RuleFor(x => x.DataAbertura, f => contaRequestDto.DataAbertura);
         return this;
     }
-    
-    public ContaResponseDtoBuilder ComContaResponse (ContaResponseDto contaResponseDto)
+
+    public ContaResponseDtoBuilder ComContaResponse(ContaResponseDto contaResponseDto)
     {
         _faker.RuleFor(x => x.Id, f => contaResponseDto.Id);
         _faker.RuleFor(x => x.ClienteId, f => contaResponseDto.ClienteId);
@@ -45,31 +45,31 @@ public class ContaResponseDtoBuilder
         _faker.RuleFor(x => x.Id, f => id);
         return this;
     }
-    
+
     public ContaResponseDtoBuilder ComClienteId(Guid clienteId)
     {
         _faker.RuleFor(x => x.ClienteId, f => clienteId);
         return this;
     }
-    
+
     public ContaResponseDtoBuilder ComSaldoInicial(decimal saldoInicial)
     {
         _faker.RuleFor(x => x.Saldo, f => saldoInicial);
         return this;
     }
-    
+
     public ContaResponseDtoBuilder ComTipoConta(TipoConta tipoConta)
     {
         _faker.RuleFor(x => x.TipoConta, f => tipoConta);
         return this;
     }
-    
+
     public ContaResponseDtoBuilder ComDataAbertura(DateTime dataAbertura)
     {
         _faker.RuleFor(x => x.DataAbertura, f => dataAbertura);
         return this;
     }
-    
+
     public ContaResponseDto Build()
         => _faker.Generate();
 }

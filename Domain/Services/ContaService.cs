@@ -1,7 +1,6 @@
 using AutoMapper;
 using Crosscutting.Dto;
 using Domain.Entities;
-using Domain.Interfaces;
 using Domain.Interfaces.Contas;
 
 namespace Domain.Services;

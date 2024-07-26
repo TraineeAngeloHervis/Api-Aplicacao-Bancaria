@@ -14,13 +14,13 @@ public class MappingProfile : Profile
         CreateMap<ContaRequestDto, Conta>();
         CreateMap<Conta, ContaResponseDto>();
         
-        CreateMap<TransferenciaRequestDto, Transferencia>();
-        CreateMap<Transferencia, TransacaoResponseDto>();
+        CreateMap<TransferenciaRequestDto, Transacao>();
+        CreateMap<Transacao, TransacaoResponseDto>();
         
-        CreateMap<DepositoRequestDto, Deposito>();
-        CreateMap<Deposito, TransacaoResponseDto>();
+        CreateMap<DepositoRequestDto, Transacao>();
+        CreateMap<Transacao, TransacaoResponseDto>();
         
-        CreateMap<SaqueRequestDto, Saque>();
-        CreateMap<Saque, TransacaoResponseDto>();
+        CreateMap<SaqueRequestDto, Transacao>();
+        CreateMap<Transacao, TransacaoResponseDto>();
     }
 }

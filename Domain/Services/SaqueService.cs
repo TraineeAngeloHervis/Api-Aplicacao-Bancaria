@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Crosscutting.Dto;
+using Crosscutting.Enums;
 using Domain.Entities;
 using Domain.Interfaces.Transacoes;
 
@@ -24,8 +25,9 @@ public class SaqueService : ISaqueService
         if (conta == null || conta.Saldo < saqueRequestDto.Valor) return null;
         
         await _transacaoRepository.AtualizarSaldo(conta.Id, -saqueRequestDto.Valor);
+        saqueRequestDto.TipoTransacao = TipoTransacao.Saque;
 
-        var saque = _mapper.Map<Saque>(saqueRequestDto);
+        var saque = _mapper.Map<Transacao>(saqueRequestDto);
         var transacaoSalva = await _transacaoRepository.SalvarTransacao(saque);
 
         return _mapper.Map<TransacaoResponseDto>(transacaoSalva);

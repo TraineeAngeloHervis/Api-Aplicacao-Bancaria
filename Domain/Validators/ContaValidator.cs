@@ -1,5 +1,4 @@
 using Crosscutting.Dto;
-using Domain.Interfaces;
 using Domain.Interfaces.Contas;
 using FluentValidation;
 

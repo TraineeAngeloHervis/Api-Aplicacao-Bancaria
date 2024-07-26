@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Crosscutting.Dto;
+using Crosscutting.Enums;
 using Domain.Entities;
 using Domain.Interfaces.Transacoes;
 
@@ -31,6 +32,7 @@ public class TransferenciaService : ITransferenciaService
 
         await _transacaoRepository.AtualizarSaldo(contaOrigem.Id, -transferenciaRequestDto.Valor);
         await _transacaoRepository.AtualizarSaldo(contaDestino.Id, transferenciaRequestDto.Valor);
+        transferenciaRequestDto.TipoTransacao = TipoTransacao.Transferencia;
 
         var transacao = _mapper.Map<Transacao>(transferenciaRequestDto);
         var transacaoSalva = await _transacaoRepository.SalvarTransacao(transacao);

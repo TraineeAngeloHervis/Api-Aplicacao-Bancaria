@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Api.Configuration;
 using Domain.Interfaces.Clientes;
 using Domain.Interfaces.Contas;
@@ -13,16 +14,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddValidatorsFromAssemblyContaining<ClienteValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<ContaValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<TransferenciaValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<DepositoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<SaqueValidator>();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         "AcessoTotal",
-        builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
+        policyBuilder => policyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
     );
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -63,4 +70,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();
