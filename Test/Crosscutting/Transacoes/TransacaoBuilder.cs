@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using Crosscutting.Enums;
 using Domain.Entities;
 using Test.Crosscutting.Contas;
 

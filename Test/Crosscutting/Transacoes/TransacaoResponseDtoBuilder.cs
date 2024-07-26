@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using Crosscutting.Dto;
+using Crosscutting.Enums;
 
 namespace Test.Crosscutting.Transacoes;
 
@@ -19,14 +20,28 @@ public class TransacaoResponseDtoBuilder
 
     public static TransacaoResponseDtoBuilder Novo()
         => new();
-
-    public TransacaoResponseDtoBuilder ComTransacaoResponse(TransacaoResponseDto transacaoResponseDto)
+    
+    public TransacaoResponseDtoBuilder ComDepositoRequest(DepositoRequestDto depositoRequestDto)
     {
-        _faker.RuleFor(x => x.Id, f => transacaoResponseDto.Id);
-        _faker.RuleFor(x => x.Valor, f => transacaoResponseDto.Valor);
-        _faker.RuleFor(x => x.ContaOrigemId, f => transacaoResponseDto.ContaOrigemId);
-        _faker.RuleFor(x => x.ContaDestinoId, f => transacaoResponseDto.ContaDestinoId);
-        _faker.RuleFor(x => x.DataTransacao, f => transacaoResponseDto.DataTransacao);
+        _faker.RuleFor(x => x.Valor, f => depositoRequestDto.Valor);
+        _faker.RuleFor(x => x.ContaOrigemId, f => depositoRequestDto.ContaOrigemId);
+        _faker.RuleFor(x => x.TipoTransacao, f => TipoTransacao.Deposito);
+        return this;
+    }
+    
+    public TransacaoResponseDtoBuilder ComSaqueRequest(SaqueRequestDto saqueRequestDto)
+    {
+        _faker.RuleFor(x => x.Valor, f => saqueRequestDto.Valor);
+        _faker.RuleFor(x => x.ContaOrigemId, f => saqueRequestDto.ContaOrigemId);
+        _faker.RuleFor(x => x.TipoTransacao, f => TipoTransacao.Saque);
+        return this;
+    }
+    
+    public TransacaoResponseDtoBuilder ComTransferenciaRequest(TransferenciaRequestDto transferenciaRequestDto)
+    {
+        _faker.RuleFor(x => x.Valor, f => transferenciaRequestDto.Valor);
+        _faker.RuleFor(x => x.ContaOrigemId, f => transferenciaRequestDto.ContaOrigemId);
+        _faker.RuleFor(x => x.ContaDestinoId, f => transferenciaRequestDto.ContaDestinoId);
         return this;
     }
 

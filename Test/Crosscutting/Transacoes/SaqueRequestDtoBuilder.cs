@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using Crosscutting.Dto;
+using Crosscutting.Enums;
 
 namespace Test.Crosscutting.Transacoes;
 
@@ -11,7 +12,8 @@ public class SaqueRequestDtoBuilder
     {
         _faker = new Faker<SaqueRequestDto>("pt_BR")
             .RuleFor(x => x.Valor, f => f.Random.Decimal(0, 100))
-            .RuleFor(x => x.ContaOrigemId, f => f.Random.Guid());
+            .RuleFor(x => x.ContaOrigemId, f => f.Random.Guid())
+            .RuleFor(x => x.TipoTransacao, f => TipoTransacao.Saque);
     }
     
     public static SaqueRequestDtoBuilder Novo()
@@ -21,6 +23,7 @@ public class SaqueRequestDtoBuilder
     {
         _faker.RuleFor(x => x.Valor, f => saqueRequestDto.Valor);
         _faker.RuleFor(x => x.ContaOrigemId, f => saqueRequestDto.ContaOrigemId);
+        _faker.RuleFor(x => x.TipoTransacao, f => saqueRequestDto.TipoTransacao);
         return this;
     }
     

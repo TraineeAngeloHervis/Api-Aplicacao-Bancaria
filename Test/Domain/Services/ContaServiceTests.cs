@@ -117,7 +117,8 @@ public class ContaServiceTests
             ContaResponseDtoBuilder.Novo().Build()
         };
         _contaRepositoryMock.Setup(x => x.ListarContas(cliente.Id)).ReturnsAsync(new List<Conta>());
-        _mapperMock.Setup(x => x.Map<IEnumerable<ContaResponseDto>>(It.IsAny<IEnumerable<Conta>>())).Returns(contas);
+        _mapperMock.Setup(x => x.Map<IEnumerable<ContaResponseDto>>(It
+            .IsAny<IEnumerable<Conta>>())).Returns(contas);
 
         // Act
         var resultadoEsperado = await _contaService.ListarContas(cliente.Id);
@@ -125,6 +126,7 @@ public class ContaServiceTests
         // Assert
         resultadoEsperado.Should().BeEquivalentTo(contas);
         _contaRepositoryMock.Verify(x => x.ListarContas(cliente.Id), Times.Once);
-        _mapperMock.Verify(x => x.Map<IEnumerable<ContaResponseDto>>(It.IsAny<IEnumerable<Conta>>()), Times.Once);
+        _mapperMock.Verify(x => x.Map<IEnumerable<ContaResponseDto>>(It
+            .IsAny<IEnumerable<Conta>>()), Times.Once);
     }
 }
