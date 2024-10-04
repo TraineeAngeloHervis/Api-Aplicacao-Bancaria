@@ -9,4 +9,6 @@ public interface IClienteService
     Task<bool> ExcluirCliente(Guid id);
     Task<ClienteResponseDto> ConsultarCliente(Guid id);
     Task<IEnumerable<ClienteResponseDto>> ListarClientes();
+    Task<IEnumerable<ClienteResponseDto>> ListarClientesComDapper();
+    Task<IEnumerable<DadosContaDto>> ConsultarTransacoesDapper(Guid id);
 }

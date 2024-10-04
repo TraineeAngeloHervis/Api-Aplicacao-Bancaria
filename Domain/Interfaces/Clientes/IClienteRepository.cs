@@ -1,3 +1,4 @@
+using Crosscutting.Dto;
 using Domain.Entities;
 
 namespace Domain.Interfaces.Clientes;
@@ -9,4 +10,7 @@ public interface IClienteRepository
     Task<bool> ExcluirCliente(Guid id);
     Task<Cliente> ConsultarCliente(Guid id);
     Task<IEnumerable<Cliente>> ListarClientes();
+    Task<IEnumerable<DadosContaDto>> ConsultarTransacoes(Guid id);
+    Task<IEnumerable<Cliente>> ListarClientesComDapper();
+    Task<IEnumerable<DadosContaDto>> ConsultarTransacoesDapper(Guid id);
 }
