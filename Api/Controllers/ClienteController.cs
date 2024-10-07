@@ -1,5 +1,5 @@
 ﻿using Crosscutting.Dto;
-using Domain.Interfaces;
+using Domain.Interfaces.Clientes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -22,7 +22,7 @@ public class ClienteController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CadastrarCliente([FromBody] ClienteRequestDto clienteRequestDto)
     {
-        if (!_clienteValidator.EhValido(clienteRequestDto, out var errors)) return BadRequest(errors);
+        if (!await _clienteValidator.EhValido(clienteRequestDto, out var errors)) return BadRequest(errors);
 
         try
         {
@@ -40,7 +40,7 @@ public class ClienteController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AtualizarCliente(Guid id, [FromBody] ClienteRequestDto clienteRequestDto)
     {
-        if (!_clienteValidator.EhValido(clienteRequestDto, out var errors)) return BadRequest(errors);
+        if (!await _clienteValidator.EhValido(clienteRequestDto, out var errors)) return BadRequest(errors);
 
         try
         {
@@ -96,6 +96,39 @@ public class ClienteController : ControllerBase
         {
             var clientes = await _clienteService.ListarClientes();
             return Ok(clientes);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpGet("listar/dapper")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> ListarClientesComDapper()
+    {
+        try
+        {
+            var clientes = await _clienteService.ListarClientesComDapper();
+            return Ok(clientes);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+    
+    [HttpGet("transacoes/{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> ConsultarTransacoesDapper(Guid id)
+    {
+        try
+        {
+            var transacoes = await _clienteService.ConsultarTransacoesDapper(id);
+            return Ok(transacoes);
         }
         catch (Exception ex)
         {

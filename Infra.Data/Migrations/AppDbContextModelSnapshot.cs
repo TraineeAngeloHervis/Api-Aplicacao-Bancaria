@@ -82,7 +82,7 @@ namespace Infra.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("ContaDestinoId")
+                    b.Property<Guid?>("ContaDestinoId")
                         .HasColumnType("char(36)");
 
                     b.Property<Guid>("ContaOrigemId")
@@ -120,13 +120,11 @@ namespace Infra.Data.Migrations
             modelBuilder.Entity("Domain.Entities.Transacao", b =>
                 {
                     b.HasOne("Domain.Entities.Conta", "ContaDestino")
-                        .WithMany()
-                        .HasForeignKey("ContaDestinoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany("Transacoes")
+                        .HasForeignKey("ContaDestinoId");
 
                     b.HasOne("Domain.Entities.Conta", "ContaOrigem")
-                        .WithMany("Transacoes")
+                        .WithMany()
                         .HasForeignKey("ContaOrigemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

@@ -2,6 +2,7 @@
 
 public enum TipoTransacao
 {
+    NaoInformado,
     Saque,
     Deposito,
     Transferencia

@@ -24,6 +24,9 @@ public class ClienteMapping : IEntityTypeConfiguration<Cliente>
         builder.Property(x => x.Cpf)
             .IsRequired()
             .HasMaxLength(11);
+        
+        builder.HasIndex(x => x.Cpf)
+            .IsUnique();
 
         builder.Property(x => x.DataNascimento)
             .IsRequired();

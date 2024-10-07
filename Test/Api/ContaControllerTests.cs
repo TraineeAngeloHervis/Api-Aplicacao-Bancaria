@@ -1,11 +1,14 @@
 using Api.Controllers;
 using Crosscutting.Dto;
-using Domain.Interfaces;
+using Domain.Interfaces.Clientes;
+using Domain.Interfaces.Contas;
 using Domain.Validators;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Test.Crosscutting;
+using Test.Crosscutting.Clientes;
+using Test.Crosscutting.Contas;
 
 namespace Test.Api;
 
@@ -33,7 +36,7 @@ public class ContaControllerTests
 
         _contaValidator.Setup(v => v.EhValido(It
                 .IsAny<ContaRequestDto>(), out It.Ref<IList<string>>.IsAny))
-            .Returns(true);
+            .ReturnsAsync(true);
 
         _clienteService.Setup(x => x.ConsultarCliente(It
                 .IsAny<Guid>()))
@@ -61,7 +64,7 @@ public class ContaControllerTests
 
         _contaValidator.Setup(v => v.EhValido(It
                 .IsAny<ContaRequestDto>(), out It.Ref<IList<string>>.IsAny))
-            .Returns(true);
+            .ReturnsAsync(true);
 
         _clienteService.Setup(x => x.ConsultarCliente(It
                 .IsAny<Guid>()))

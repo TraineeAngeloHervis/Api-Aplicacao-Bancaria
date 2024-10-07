@@ -1,5 +1,5 @@
 using Crosscutting.Dto;
-using Domain.Interfaces;
+using Domain.Interfaces.Contas;
 using FluentValidation;
 
 namespace Domain.Validators;
@@ -25,10 +25,10 @@ public class ContaValidator : AbstractValidator<ContaRequestDto>, IContaValidato
             .WithMessage("Tipo de conta inválido.");
     }
 
-    public bool EhValido(ContaRequestDto contaRequestDto, out IList<string> errors)
+    public Task<bool> EhValido(ContaRequestDto contaRequestDto, out IList<string> errors)
     {
-        var result = Validate(contaRequestDto);
-        errors = result.Errors.Select(e => e.ErrorMessage).ToList();
-        return result.IsValid;
+        var validationResult = Validate(contaRequestDto);
+        errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+        return Task.FromResult(validationResult.IsValid);
     }
 }

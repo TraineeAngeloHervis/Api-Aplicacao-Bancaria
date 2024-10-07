@@ -1,5 +1,8 @@
+using System.Text.Json.Serialization;
 using Api.Configuration;
-using Domain.Interfaces;
+using Domain.Interfaces.Clientes;
+using Domain.Interfaces.Contas;
+using Domain.Interfaces.Transacoes;
 using Domain.Services;
 using Domain.Validators;
 using FluentValidation;
@@ -10,17 +13,23 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddValidatorsFromAssemblyContaining<ClienteValidator>();
 builder.Services.AddValidatorsFromAssemblyContaining<ContaValidator>();
-builder.Services.AddValidatorsFromAssemblyContaining<TransacaoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<TransferenciaValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<DepositoValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<SaqueValidator>();
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         "AcessoTotal",
-        builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
+        policyBuilder => policyBuilder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
     );
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -30,9 +39,15 @@ builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<IContaService, ContaService>();
 builder.Services.AddScoped<IContaRepository, ContaRepository>();
 builder.Services.AddScoped<IContaValidator, ContaValidator>();
-builder.Services.AddScoped<ITransacaoService, TransacaoService>();
+builder.Services.AddScoped<ITransferenciaService, TransferenciaService>();
+builder.Services.AddScoped<ITransferenciaValidator, TransferenciaValidator>();
 builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
-builder.Services.AddScoped<ITransacaoValidator, TransacaoValidator>();
+builder.Services.AddScoped<ITransacaoService, TransacaoService>();
+builder.Services.AddScoped<IDepositoService, DepositoService>();
+builder.Services.AddScoped<IDepositoValidator, DepositoValidator>();
+builder.Services.AddScoped<ISaqueService, SaqueService>();
+builder.Services.AddScoped<ISaqueValidator, SaqueValidator>();
+
 
 
 builder.Services.AddConfiguracaoAutoMapper();
@@ -55,4 +70,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

@@ -1,7 +1,7 @@
 using AutoMapper;
 using Crosscutting.Dto;
 using Domain.Entities;
-using Domain.Interfaces;
+using Domain.Interfaces.Clientes;
 
 namespace Domain.Services;
 
@@ -54,4 +54,14 @@ public class ClienteService : IClienteService
         var clientes = await _clienteRepository.ListarClientes();
         return _mapper.Map<IEnumerable<ClienteResponseDto>>(clientes);
     }
+    
+    public async Task<IEnumerable<ClienteResponseDto>> ListarClientesComDapper()
+    {
+        var clientes = await _clienteRepository.ListarClientesComDapper();
+        return _mapper.Map<IEnumerable<ClienteResponseDto>>(clientes);
+    }
+
+    public async Task<IEnumerable<DadosContaDto>> ConsultarTransacoesDapper(Guid id)
+        => await _clienteRepository.ConsultarTransacoesDapper(id);
+    
 }

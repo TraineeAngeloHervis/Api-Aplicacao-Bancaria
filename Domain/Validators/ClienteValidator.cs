@@ -1,5 +1,5 @@
 using Crosscutting.Dto;
-using Domain.Interfaces;
+using Domain.Interfaces.Clientes;
 using FluentValidation;
 
 namespace Domain.Validators;
@@ -8,28 +8,28 @@ public class ClienteValidator : AbstractValidator<ClienteRequestDto>, IClienteVa
 {
     public ClienteValidator()
     {
-        RuleFor(cliente => cliente.Nome)
+        RuleFor(c => c.Nome)
             .NotEmpty()
             .WithMessage("O nome do cliente é obrigatório.");
 
-        RuleFor(cliente => cliente.Cpf)
+        RuleFor(c => c.Cpf)
             .NotEmpty()
             .Matches(@"\d{11}")
             .WithMessage("O CPF do cliente é inválido.");
 
-        RuleFor(cliente => cliente.DataNascimento)
+        RuleFor(c => c.DataNascimento)
             .LessThan(DateTime.Now)
             .WithMessage("A data de nascimento não pode ser maior que a data atual.");
 
-        RuleFor(cliente => cliente.EstadoCivil)
+        RuleFor(c => c.EstadoCivil)
             .IsInEnum()
             .WithMessage("Estado civil inválido.");
     }
     
-    public bool EhValido(ClienteRequestDto clienteRequestDto, out IList<string> errors)
+    public Task<bool> EhValido(ClienteRequestDto clienteRequestDto, out IList<string> errors)
     {
-        var result = Validate(clienteRequestDto);
-        errors = result.Errors.Select(e => e.ErrorMessage).ToList();
-        return result.IsValid;
+        var validationResult = Validate(clienteRequestDto);
+        errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+        return Task.FromResult(validationResult.IsValid);
     }
 }
